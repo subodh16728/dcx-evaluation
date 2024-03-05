@@ -16,7 +16,6 @@ function SignIn() {
       let receivedInfo = await signInUser(user);
       console.log(receivedInfo);
       localStorage.setItem("token", receivedInfo.token);
-      window.alert("User login successfully!");
       navigate("/");
       window.location.reload();
     } catch (err) {

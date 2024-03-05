@@ -4,19 +4,18 @@ import { useNavigate } from "react-router-dom";
 import Nav from "./navbar";
 import { signUpUser } from "../Service/userApiService";
 
-
 const SignUp = () => {
   const [user, setUser] = useState({
-    username: "",
+    name: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
 
   const signUpUserInfo = async () => {
     try {
       let receivedInfo = await signUpUser(user);
       console.log(receivedInfo);
-      window.alert("User register successfully!");
       navigate("/signin");
     } catch (err) {
       console.log(err);
@@ -35,6 +34,10 @@ const SignUp = () => {
       .email({ minDomainSegments: 2, tlds: { allow: ["com", "in"] } })
       .required(),
     password: Joi.string().regex(new RegExp("^[a-zA-Z0-9]{3,30}$")).required(),
+    confirmPassword: Joi.string()
+      .valid(Joi.ref("password"))
+      .required()
+      .messages({ "any.only": "Passwords must match" }),
   });
 
   const validate = () => {
@@ -146,6 +149,20 @@ const SignUp = () => {
                 {errors && (
                   <small className="text-danger">{errors.password}</small>
                 )}
+              </div>
+              <div className="mb-3">
+                <label htmlFor="confirmPassword" className="form-label">
+                  Confirm Password
+                </label>
+                <input
+                  type="password"
+                  className="form-control"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  value={user.confirmPassword}
+                  onChange={handleChange}
+                />
+                <small className="text-danger">{errors.confirmPassword}</small>
               </div>
               <div className="d-grid gap-2">
                 <input type="submit" className="btn btn-secondary" />
