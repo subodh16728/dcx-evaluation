@@ -4,7 +4,9 @@ import Login from "./components/Login";
 import { Route, Routes } from 'react-router-dom';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
-import AddProduct from './components/AddProduct';
+import Products from './components/Products';
+import Bookmarks from './components/Bookmarks';
+import Offers from './components/Offers';
 
 function App() {
   return (
@@ -14,7 +16,10 @@ function App() {
         <Route path='/dashboard' element={<Dashboard />} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
-        <Route path='/addproduct' element={<AddProduct />} />
+        <Route path='/products/add' element={<Products />} />
+        <Route path='/bookmarks' element={<Bookmarks />} />
+        <Route path='/offers' element={<Offers />} />
+        <Route path='/products/edit/:id' element={<Products />} />
       </Routes>
     </>
   );
