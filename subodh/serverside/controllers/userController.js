@@ -100,6 +100,8 @@ const userSignin = async (req, res) => {
                 expiresIn: '7d'
             })
 
+            console.log(token)
+
             res.status(200).json({
                 token: token,
                 error: false,
