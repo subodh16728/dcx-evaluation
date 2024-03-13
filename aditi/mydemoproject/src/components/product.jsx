@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { getproducts } from "../Service/productApiService";
-import { NavLink,Link } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import Nav from "./navbar";
+import { modifyById } from "../Service/productApiService";
 
 const Product = () => {
   const [data, setData] = useState([]);
@@ -13,6 +14,18 @@ const Product = () => {
       let receivedProduct = await getproducts();
       if (receivedProduct?.length > 0) {
         setData(receivedProduct);
+      }
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+
+  const populateBookmarkedProduct = async (id, data) => {
+    try {
+      let receivedProduct = await modifyById(id, data);
+      console.log(receivedProduct);
+      if (receivedProduct) {
+        populateProduct();
       }
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -46,11 +59,23 @@ const Product = () => {
 
   const filteredData = data.filter(
     (item) =>
-    item.productName && item.productName.toLowerCase().includes(searchTerm.toLowerCase())||
+      (item.productName &&
+        item.productName.toLowerCase().includes(searchTerm.toLowerCase())) ||
       item.productCategory.some((category) =>
         category.toLowerCase().includes(searchTerm.toLowerCase())
       )
   );
+
+  const handleBookmark = (data) => {
+    const productID = data._id;
+    const bookmarkToggle = !data.productBookmarked;
+    console.log(data);
+    console.log(productID);
+
+    console.log("Data after click:", bookmarkToggle);
+
+    populateBookmarkedProduct(productID, { productBookmarked: bookmarkToggle });
+  };
 
   return (
     <>
@@ -75,22 +100,23 @@ const Product = () => {
             <form className="d-flex" role="search">
               <input
                 type="text"
-                placeholder="Search products..."
+                placeholder="Search Product"
                 value={searchTerm}
                 onChange={handleSearchInputChange}
-                className="mx-auto"
+                className="searchBox mx-auto"
               />
-              <Link to="/product/add" className='btn btn-secondary me-auto float-end'>Add Product</Link>
             </form>
             <div>
               <table className="table">
                 <thead>
                   <tr>
-                    <th onClick={handleSortByName}>
+                    <th className="sorting-head" onClick={handleSortByName}>
                       P.Name {sortOrder === "ascending" ? "↑" : "↓"}
                     </th>
                     <th>P.Price</th>
                     <th>P.Category</th>
+                    <th>Wishlist</th>
+                    <th>Edit</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -103,6 +129,27 @@ const Product = () => {
                       </td>
                       <td>{product.productPrice}</td>
                       <td>{product.productCategory}</td>
+                      <td className="text-center">
+                        <a
+                          href="#"
+                          onClick={() => handleBookmark(product)}
+                        >
+                          <i
+                            class={`bi ${
+                              product.productBookmarked
+                                ? "bi-bookmark-heart-fill"
+                                : "bi-bookmark-heart"
+                            }`}
+                          ></i>
+                        </a>
+                      </td>
+                      <td>
+                        {product._id ? (
+                          <NavLink to={`/product/modify/${product._id}`}>
+                            <i className="bi bi-pencil-fill me-3"></i>
+                          </NavLink>
+                        ) : null}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

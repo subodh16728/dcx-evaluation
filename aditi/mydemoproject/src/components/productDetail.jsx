@@ -30,6 +30,7 @@ export default function ProductDetails() {
     }
   }, []);
 
+
   return (
     <>
       <Nav />
@@ -46,7 +47,8 @@ export default function ProductDetails() {
        }}
        >
         <div className="product-container w-50 mx-auto mt-5">
-          <div className="shadow p-3 mb-5 bg-body-tertiary rounded my-auto">
+          <div className="border border-dark shadow p-3 mb-5 bg-body-tertiary rounded my-auto">
+            <div className=" p-3">
             {data && (
               <div className="product d-flex">
                 <div style={{ marginLeft: "20px" }}>
@@ -54,10 +56,14 @@ export default function ProductDetails() {
                     <h2 style={{ textAlign: "center" }}>{data.productName}</h2>
                   </div>
                   <img
-                    src={`/images/${data.productImageUrl}`}
+                    src={`/images/${data.productImageUrl && data.productImageUrl.split("\\").pop()}`}
                     alt={data.productName}
                     width={150}
                     height={200}
+                    style={{
+                      border: "1px solid #101010",
+                      borderRadius: "5px", 
+                    }}
                   />
                   <h5 style={{ textAlign: "center" }}>
                     Price: ${data.productPrice}
@@ -70,6 +76,7 @@ export default function ProductDetails() {
                 </div>
               </div>
             )}
+            </div>
           </div>
         </div>
       </div>

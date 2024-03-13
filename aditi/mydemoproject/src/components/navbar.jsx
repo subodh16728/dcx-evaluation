@@ -7,7 +7,7 @@ export default function Nav() {
 
   const handleLogOut = () => {
     localStorage.clear();
-    window.alert("User Logout successfully!");
+    // window.alert("User Logout successfully!");
     navigate("/");
   };
 
@@ -42,6 +42,33 @@ export default function Nav() {
                 href="/product"
               >
                 Products
+              </a>
+            </li>
+            <li className="nav-item">
+              <a
+                className="nav-link active"
+                aria-current="page"
+                href="/product/add"
+              >
+                Add Product
+              </a>
+            </li>
+            <li className="nav-item">
+              <a
+                className="nav-link active"
+                aria-current="page"
+                href="/product/offer"
+              >
+                Offers
+              </a>
+            </li>
+            <li className="nav-item">
+              <a
+                className="nav-link active"
+                aria-current="page"
+                href="/product/wishlist"
+              >
+                Wishlist
               </a>
             </li>
           </ul>

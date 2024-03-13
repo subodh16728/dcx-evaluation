@@ -63,5 +63,25 @@ const searchProductsByName = async (product) => {
         throw new Error('Error searching product:', error);
     }
 }
+const modifyById = async (id,data) => {
+    try{
+        const response = await axios.put(`${baseUrl}/update/${id}`,data);
+        return response.data;
+    }catch (error){
+        throw new Error("Error Updating Product:",error);
+    }
+}
 
-export { getproducts,getproductByCategory,getNewProducts ,searchProductsByName, getProductById, postProduct}
+const getBookmarkedProducts = async() =>{
+    const response = await axios.get(`${baseUrl}/bookmarked`)
+    if (response.status === 200) {
+        const products = await response.data
+        return products
+    }
+    else {
+        return null;
+    }
+}
+
+export { getproducts,getproductByCategory,getNewProducts ,searchProductsByName,
+     getProductById, postProduct, modifyById, getBookmarkedProducts}

@@ -5,12 +5,7 @@ import Nav from "./navbar";
 import { signUpUser } from "../Service/userApiService";
 
 const SignUp = () => {
-  const [user, setUser] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
+  
 
   const signUpUserInfo = async () => {
     try {
@@ -29,7 +24,7 @@ const SignUp = () => {
   const navigate = useNavigate();
 
   const schema = Joi.object({
-    username: Joi.string().alphanum().min(3).max(30).required(),
+    username: Joi.string().required(),
     email: Joi.string()
       .email({ minDomainSegments: 2, tlds: { allow: ["com", "in"] } })
       .required(),
@@ -40,11 +35,20 @@ const SignUp = () => {
       .messages({ "any.only": "Passwords must match" }),
   });
 
+  const [user, setUser] = useState({
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
   const validate = () => {
     const errors = {};
     const { error } = schema.validate(user, {
       abortEarly: false,
-    });
+    },
+    );
+    console.log("Error",error)
 
     if (error) {
       for (let item of error.details) {
@@ -60,13 +64,20 @@ const SignUp = () => {
     setUser(tempUser);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-
-    setErrors(validate());
-    if (errors) return;
-
-    signUpUserInfo();
+  
+    // Validate the form
+    const validationErrors = validate();
+  
+    // Set the errors state after the validation
+    setErrors(validationErrors);
+  
+    // Check if there are validation errors
+    if (validationErrors) return;
+  
+    // Proceed with form submission
+    await signUpUserInfo();
   };
 
   return (
@@ -156,13 +167,16 @@ const SignUp = () => {
                 </label>
                 <input
                   type="password"
+                  placeholder="Re-Enter your password"
                   className="form-control"
                   id="confirmPassword"
                   name="confirmPassword"
                   value={user.confirmPassword}
                   onChange={handleChange}
                 />
+                {errors && (
                 <small className="text-danger">{errors.confirmPassword}</small>
+                )}
               </div>
               <div className="d-grid gap-2">
                 <input type="submit" className="btn btn-secondary" />
