@@ -4,6 +4,7 @@ import { Navigate } from "react-router-dom";
 import { store } from "../App";
 import { NavLink } from "react-router-dom";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 export default function Login(){
     const [token,setToken]=useContext(store)
@@ -20,7 +21,12 @@ export default function Login(){
     const submitHandler=e=>{
         e.preventDefault();
         axios.post("http://localhost:3000/api/login",data)
-        .then(res=>setToken(res.data.token))
+        .then(res=>{
+            const token=localStorage.getItem("token");
+            const UserId=jwtDecode(token).user.id;
+            localStorage.setItem("token",res.data.token);
+            localStorage.setItem("userId",UserId);
+            setToken(res.data.token)})
         .catch(err=>alert("Incorrect Email or Password",err));
     }
     if(token){

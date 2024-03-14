@@ -6,6 +6,12 @@ import Login from './components/Login';
 import Home from './components/Home';
 
 import ProductForm from './components/Addnew';
+import Wishlist from './components/Wishlist';
+import MyOffers from './components/Myoffers';
+import MyProfile from './components/MyProfile';
+import ProfileEdit from './components/Edit';
+
+
 
 
 export const store=createContext();
@@ -18,13 +24,17 @@ function App() {
     <BrowserRouter>
    
     
-      
       <Routes>
  
         <Route path='/' element={<Register />} />;
         <Route path='/login' element={<Login />} />;
         <Route path='/home' element={<Home />} />;
         <Route path='/newproduct' element={<ProductForm />} />;
+        <Route path='/wishlist' element={<Wishlist />} />;
+        <Route path="/offers" element={<MyOffers/>}/>;
+        <Route path="/myprofile" element={<MyProfile/>}/>
+        <Route path="/edit/:id" element={<ProfileEdit/>}/>
+
       
  
       </Routes>
