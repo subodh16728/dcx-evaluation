@@ -1,5 +1,7 @@
 import React,{useState,useContext} from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { Navigate } from "react-router-dom";
 import { store } from "../App";
 import { NavLink } from "react-router-dom";
@@ -27,7 +29,9 @@ export default function Login(){
             localStorage.setItem("token",res.data.token);
             localStorage.setItem("userId",UserId);
             setToken(res.data.token)})
-        .catch(err=>alert("Incorrect Email or Password",err));
+        .catch(err=>{
+            console.log(err)
+            toast.error("Incorrect Email or Password")});
     }
     if(token){
         return <Navigate to="/home"/>

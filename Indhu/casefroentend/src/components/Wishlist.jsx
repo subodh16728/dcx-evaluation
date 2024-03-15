@@ -3,7 +3,7 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
 import "./CSS/Table.css";
-import Header from './Header';
+
 
 const Wishlist = () => {
     const [wishlistItems, setWishlistItems] = useState([]);
@@ -81,7 +81,7 @@ const Wishlist = () => {
     }
     return (
         <div>
-            <Header/>
+           
             <h1>Wishlist Items</h1>
             <table className='product-table'>
                 <thead>

@@ -1,7 +1,10 @@
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import React, { useState } from "react";
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { NavLink ,useNavigate} from "react-router-dom";
+
 
 export default function Register() {
     const navigate = useNavigate();
@@ -47,7 +50,7 @@ export default function Register() {
         if (validateForm()) {
             try {
                 const res = await axios.post("http://localhost:3000/api/register", data);
-                alert(res.data);
+                toast.success(res.data);
                 // Redirect to login page after successful registration
                 navigate('/home');
             } catch (err) {
@@ -55,10 +58,10 @@ export default function Register() {
                 const errormessage=err.response?.data;
                 // Check if the error response contains a message
                 if (errormessage==="User already exists") {
-                    alert("User already exists");
+                    toast.error("User already exists");
                 } else {
                     console.error("Error:",err);
-                    alert("An error occurred. Please try again later.");
+                    toast.error("An error occurred. Please try again later.");
                 }
             }
         }

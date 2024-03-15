@@ -16,7 +16,7 @@ export default function Header() {
                 {/* <NavLink className="nav-link" to="/myprofile">Logout</NavLink> */}
                 <button onClick={()=>setToken(null)} className="nav-link">  Logout</button>
                 <NavLink className="nav-link" to="/wishlist">Wishlist</NavLink>
-                <NavLink className="nav-link" to="/offers">My Offers</NavLink>
+                {/* <NavLink className="nav-link" to="/offers">My Offers</NavLink> */}
 
             </header>
         </div>

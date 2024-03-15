@@ -24,7 +24,7 @@ exports.createBookmark = async (req, res) => {
 
         // Check if product already exists in 
         if (bookmark.product.includes(productId)) {
-            return res.status(400).json({ error: "Product already Bookmarked" });
+            return res.status(400).json({ error: "Product already in wishlist" });
         }
 
         // Add the new product to the bookmark list

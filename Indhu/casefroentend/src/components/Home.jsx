@@ -1,13 +1,14 @@
 // Home.js
-
 import React, { useContext, useState, useEffect } from "react";
+import { toast } from 'react-toastify';
 import { store } from "../App";
 import { Navigate, NavLink } from "react-router-dom";
 import axios from "axios";
-import Header from "./Header";
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./CSS/Table.css";
 import { jwtDecode } from "jwt-decode";
+
 
 // Your component code goes here...
 
@@ -65,29 +66,22 @@ const Home = () => {
             // localStorage.setItem(UserId)
             
             await axios.post(`http://localhost:3000/api/bookmark/add/${UserId}`, { product: pId });
-            alert(`Product "${pName}" added to wishlist successfully`);
+            toast.success(`Product "${pName}" added to wishlist successfully`);
         }
         catch(error){
             const errorMessage=error.response?.data;
             console.log(errorMessage.error)
             if(errorMessage.error==="Product already in wishlist"){
 
-                alert(`Product is already in your wishlist `);
+                toast.error(`Product is already in your wishlist `);
             }else{
                 console.error('Error:',error);
-                alert('Failed to add product')
+                toast.error('Failed to add product')
             }
 
         }
 
-    //    console.log(userId,productId)
-    //     // You can send a request to your backend to add the product to the user's wishlist
-    //     axios.post(`http://localhost:3000/api/bookmark/add/${userId}`, { productId: productId })
-    //         .then(res => {
-    //             console.log("Product bookmarked:");
-    //             // Optionally, you can update the state to reflect the bookmarked product
-    //         })
-    //         .catch(err => console.error(err));
+   
     };
 
     if (!token) {
@@ -96,7 +90,7 @@ const Home = () => {
 
     return (
         <div>
-            <Header />
+            
             {userData && (
                 <center>
                     <h2>Welcome  {userData.name}</h2>
@@ -111,12 +105,7 @@ const Home = () => {
                         onChange={handleSearch}
                     />
                 </div>
-                <div>
-                    <NavLink to="/newproduct" className="btn btn-default border w-100 bg-light rounded-0 text-decoration-none">Add New Product</NavLink>
-                </div>
-                <div>
-                    <NavLink to="/myprofile" className="btn btn-default border w-100 bg-light rounded-0 text-decoration-none">My Profile</NavLink>
-                </div>
+                
             </div>
             <center>
                 <table className="product-table">

@@ -3,7 +3,8 @@ import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from "react-router-dom";
 
-import Header from "./Header";
+import { toast } from "react-toastify";
+
 
 export default function ProductForm() {
     const navigate = useNavigate();
@@ -46,7 +47,7 @@ export default function ProductForm() {
             newErrors.pprice = "Product price is required";
             formIsValid = false;
         }
-        if(data.pprice<=0){
+        else if(data.pprice<=0){
             newErrors.pprice = "Product price should be greater than 0";
             formIsValid = false;
 
@@ -57,7 +58,7 @@ export default function ProductForm() {
         if (formIsValid) {
             try {
                 const res = await axios.post("http://localhost:3000/api/table", data);
-                alert(res.data);
+                toast.success(res.data);
                 navigate('/home');
             } catch (err) {
                 console.error(err);
@@ -66,10 +67,10 @@ export default function ProductForm() {
                 const errormessage=err.response?.data;
                 // Check if the error response contains a message
                 if (errormessage==="Product already exists") {
-                    alert("Product already exists");
+                    toast.error("Product already exists");
                 } else {
                     console.error("Error:",err);
-                    alert("An error occurred. Please try again later.");
+                    toast.error("An error occurred. Please try again later.");
                 }
             }
         }
@@ -78,7 +79,7 @@ export default function ProductForm() {
     };
 
     return (
-        <div> <Header/>
+        <div> 
      
     
         <div className="d-flex justify-content-center align-items-center vh-100">

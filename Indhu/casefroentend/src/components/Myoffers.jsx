@@ -4,7 +4,7 @@ import axios from "axios";
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
 import { jwtDecode } from 'jwt-decode';
-import Header from "./Header";
+
 export default function Offers() {
     let token = localStorage.getItem("token");
 
@@ -62,7 +62,7 @@ export default function Offers() {
  
     return (
         <>
-        <Header/>
+        
         <div class="row">
 
             

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, NavLink } from 'react-router-dom';
-import Header from './Header';
+
 import axios from 'axios';
+
  
 function Userprofile() {
     const [data1, setData] = useState({
@@ -47,7 +48,7 @@ function Userprofile() {
  
     return (
         <>
-        <Header/>
+       
             <section>
                 <div class="container shadow-lg p-3 mb-5 bg-white rounded p-5">
                     <div className="row">
