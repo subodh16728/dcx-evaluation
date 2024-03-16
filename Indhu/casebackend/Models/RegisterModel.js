@@ -2,9 +2,13 @@ const mongoose = require("mongoose");
 
 const RegistarionSchema=mongoose.Schema({
     name:{type:String,required:true,},
-    email:{type:String,required:true,},
+    email:{type:String,required:true,unique:true},
     password:{type:String,required:true,maxlength:12,minlength:8},
-    confirmpassword:{type:String,required:true,maxlength:12,minlength:8}
+    confirmpassword:{type:String,required:true,maxlength:12,minlength:8},
+    age:{type:Number},
+    gender:{type:String}
+
+    
 
 },{ timestamps: true })
 // RegistarionSchema.plugin(uniqueValidator);

@@ -32,6 +32,26 @@ exports.createProducts=async(req,res)=>{
 }
 
 
+exports.getProductById = async (req, res) => {
+    const productId = req.params.productId; // Assuming the product ID is passed as a route parameter
+
+    try {
+        // Find the product by ID
+        const product = await Tabledata.findById(productId);
+
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        res.json(product);
+    } catch (err) {
+        console.error('Error fetching product details:', err);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+
+
 exports.findProductByName = async (req, res) => {
     let getName = req.query.pname
     console.log(getName);
