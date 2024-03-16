@@ -40,12 +40,9 @@ export default function Offers() {
     try {
       const receivedInfo = await sendEmailtoUser(email,data);
       console.log("Data",receivedInfo);
-
       if (receivedInfo) {
-        
         toast.success("Offers sent to your Gmail")
       }
-      
     } catch (err) {
       console.error(`Error in Sending mail: ${err}`);
       toast.error("Error in Sending Mail");
@@ -78,7 +75,7 @@ export default function Offers() {
             <p className="h4 text-white bg-secondary p-2 text-center">
               Available Offers
             </p>
-            <div>
+            <div className="ms-3">
               {offers && offers.map((offer, index) => (
                 <div className="offer-box" key={index}>
                   <h3>{offer.tittle}</h3>

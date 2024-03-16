@@ -17,7 +17,6 @@ function SignIn() {
       console.log(receivedInfo);
       localStorage.setItem("token", receivedInfo.token);
       navigate("/");
-      window.location.reload();
     } catch (err) {
       console.log(err);
       setErrRes(err);

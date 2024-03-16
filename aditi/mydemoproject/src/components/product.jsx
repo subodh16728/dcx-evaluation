@@ -1,14 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { getproducts } from "../Service/productApiService";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 import Nav from "./navbar";
-import { modifyById } from "../Service/productApiService";
+import { modifyById } from "../Service/userApiService";
+import { toast } from "react-toastify";
 
 const Product = () => {
   const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("ascending");
+  const navigate = useNavigate();
 
+  let token = localStorage.getItem("token");
+  let decodedToken = null;
+  if (token) {
+    decodedToken = jwtDecode(token);
+  }
+  
   const populateProduct = async () => {
     try {
       let receivedProduct = await getproducts();
@@ -27,8 +36,10 @@ const Product = () => {
       if (receivedProduct) {
         populateProduct();
       }
+      toast.success(receivedProduct.message);
     } catch (error) {
       console.error("Error fetching products:", error);
+      toast.error(error.receivedProduct.message);
     }
   };
 
@@ -67,14 +78,17 @@ const Product = () => {
   );
 
   const handleBookmark = (data) => {
-    const productID = data._id;
-    const bookmarkToggle = !data.productBookmarked;
-    console.log(data);
-    console.log(productID);
-
-    console.log("Data after click:", bookmarkToggle);
-
-    populateBookmarkedProduct(productID, { productBookmarked: bookmarkToggle });
+  
+    if (!token) {
+      navigate("/signin");
+    }else{
+      const productID = data._id;
+      const userID = decodedToken._id;
+      console.log(data);
+      console.log(productID);
+      populateBookmarkedProduct(userID, { _id: productID });
+    }
+    
   };
 
   return (
@@ -134,12 +148,15 @@ const Product = () => {
                           href="#"
                           onClick={() => handleBookmark(product)}
                         >
-                          <i
+                          {/* <i
                             class={`bi ${
                               product.productBookmarked
                                 ? "bi-bookmark-heart-fill"
                                 : "bi-bookmark-heart"
                             }`}
+                          ></i> */}
+                          <i
+                            class={"bi bi-bookmark-heart-fill"}
                           ></i>
                         </a>
                       </td>
