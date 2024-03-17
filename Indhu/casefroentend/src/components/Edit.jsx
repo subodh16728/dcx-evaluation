@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { useParams, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { NavLink } from 'react-router-dom'
@@ -39,7 +41,7 @@ const ProfileEdit = () => {
     const handleUpdate = async (e) => {
         e.preventDefault();
         await axios.put(`${baseUrl}/edit/${id}`, formData);
-        alert('User updated successfully');
+        toast.success('User updated successfully');
         navigate('/myprofile'); // Redirect to the userprofile page
     };
  

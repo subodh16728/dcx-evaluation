@@ -1,21 +1,23 @@
-import React,{useState,useContext} from "react";
+import React,{useState} from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Navigate } from "react-router-dom";
-import { store } from "../App";
 import { NavLink } from "react-router-dom";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
+
 export default function Login(){
-    const [token,setToken]=useContext(store)
+    const [token,setToken]=useState();
+   
     const[data,setData]=useState({
         
         email:"",
         password:"",
     
     })
+    
     const changeHandler=e=>{
         setData({...data,[e.target.name]:e.target.value})
     }
@@ -24,11 +26,17 @@ export default function Login(){
         e.preventDefault();
         axios.post("http://localhost:3000/api/login",data)
         .then(res=>{
-            const token=localStorage.getItem("token");
+            // console.log(res);
+            const token=res.data.token;
+            // console.log(token);
+           
+            localStorage.setItem("token", token);
+
             const UserId=jwtDecode(token).user.id;
-            localStorage.setItem("token",res.data.token);
+            console.log(UserId);
+           
             localStorage.setItem("userId",UserId);
-            setToken(res.data.token)})
+            setToken(token)})
         .catch(err=>{
             console.log(err)
             toast.error("Incorrect Email or Password")});
@@ -48,13 +56,13 @@ export default function Login(){
                     <label htmlFor="email">
                         <strong>Email</strong>
                     </label>
-                    <input type="email" placeholder="Enter email" id="email" autoComplete="off" name="email"  className="form-control rounded-0" onChange={changeHandler}/>
+                    <input type="email" placeholder="Enter email" id="email" autoComplete="off" name="email"  className="form-control rounded-0" required onChange={changeHandler}/>
                 </div>
                 <div className="mb-3">
                     <label htmlFor="password">
                         <strong>Password</strong>
                     </label>
-                    <input type="password" placeholder="Enter Password" id="password" autoComplete="off" name="password" className="form-control rounded-0" onChange={changeHandler}/>
+                    <input type="password" placeholder="Enter Password" id="password" autoComplete="off" name="password" className="form-control rounded-0" required onChange={changeHandler}/>
                 </div>
                 <button type="submit" className="btn btn-success w-100 rounded-0">Login</button>
                 

@@ -67,4 +67,24 @@ exports.findProductByName = async (req, res) => {
         res.status(400);
     }
 }
+exports.deleteProductById = async (req, res) => {
+    const productId = req.params.productId;
+    // console.log(productId)
 
+    try {
+        // Check if the product exists
+        const product = await Tabledata.findById(productId);
+
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        // If the product exists, delete it
+        await Tabledata.findByIdAndDelete(productId);
+        
+        res.json({ message: 'Product deleted successfully' });
+    } catch (err) {
+        console.error('Error deleting product:', err);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};

@@ -8,6 +8,13 @@ import { jwtDecode } from 'jwt-decode';
 export default function Offers() {
     let token = localStorage.getItem("token");
 
+    useEffect(() => {
+        if (!token) {
+            navigate("/login")
+        }
+    }, [])
+
+
     const [offers, setOffers] = useState([]);
     const navigate = useNavigate();
  

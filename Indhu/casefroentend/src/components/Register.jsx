@@ -8,12 +8,16 @@ import { NavLink ,useNavigate} from "react-router-dom";
 
 export default function Register() {
     const navigate = useNavigate();
+    const [showPassword, setShowPassword] = useState(false);
     const [data, setData] = useState({
         name: "",
         email: "",
         password: "",
         confirmpassword: ""
     });
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+      };
 
     const [errors, setErrors] = useState({});
 
@@ -30,9 +34,14 @@ export default function Register() {
         }
         if (!data.email.trim()) {
             newErrors.email = 'Email is required';
+        }else if (!/\S+@\S+\.\S+/.test(data.email.trim())) {
+            newErrors.email = 'Invalid email format';
         }
         if (!data.password.trim()) {
             newErrors.password = 'Password is required';
+        }
+        else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(data.password.trim())) {
+            newErrors.password = 'Password must have at least 8 characters, 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special symbol';
         }
         if (!data.confirmpassword.trim()) {
             newErrors.confirmpassword = 'Confirm Password is required';
@@ -85,21 +94,26 @@ export default function Register() {
                         <label htmlFor="email">
                             <strong>Email</strong>
                         </label>
-                        <input type="email" placeholder="Enter email" id="email" autoComplete="off" name="email" onChange={changeHandler} className={`form-control rounded-0 ${errors.email && 'is-invalid'}`} />
+                        <input type="email" placeholder="Enter email Ex: abc@gmail.com" id="email" autoComplete="off" name="email" onChange={changeHandler} className={`form-control rounded-0 ${errors.email && 'is-invalid'}`} />
                         {errors.email && <div className="invalid-feedback">{errors.email}</div>}
                     </div>
                     <div className="mb-3">
                         <label htmlFor="password">
                             <strong>Password</strong>
                         </label>
-                        <input type="password" placeholder="Enter Password" id="password" autoComplete="off" name="password" onChange={changeHandler} className={`form-control rounded-0 ${errors.password && 'is-invalid'}`} />
+                        <input type={showPassword ? 'text' : 'password'} placeholder="Enter Password" id="password" autoComplete="off" name="password" onChange={changeHandler} className={`form-control rounded-0 ${errors.password && 'is-invalid'}`} />
+                                                <i
+                        className={`password-toggle fas ${showPassword ? 'fa-eye' : 'fa-eye-slash'}`}
+                        onClick={togglePasswordVisibility}
+                        ></i>   
                         {errors.password && <div className="invalid-feedback">{errors.password}</div>}
+
                     </div>
                     <div className="mb-3">
                         <label htmlFor="confirmpassword">
                             <strong>Confirm Password</strong>
                         </label>
-                        <input type="password" placeholder="Confirm Password" id="confirmpassword" autoComplete="off" name="confirmpassword" onChange={changeHandler} className={`form-control rounded-0 ${errors.confirmpassword && 'is-invalid'}`} />
+                        <input type={showPassword ? 'text' : 'password'} placeholder="Confirm Password" id="confirmpassword" autoComplete="off" name="confirmpassword" onChange={changeHandler} className={`form-control rounded-0 ${errors.confirmpassword && 'is-invalid'}`} />
                         {errors.confirmpassword && <div className="invalid-feedback">{errors.confirmpassword}</div>}
                     </div>
                     <button type="submit" className="btn btn-success w-100 rounded-0">Register</button>

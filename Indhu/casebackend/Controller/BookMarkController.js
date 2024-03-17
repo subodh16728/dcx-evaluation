@@ -52,33 +52,6 @@ exports.getwishlistItems = async (req, res) => {
   };
 
 
-
-// Delete bookmark
-// exports.deleteBookmark = async (req, res) => {
-//   const userId = req.params.userId;
-
-//     const productId = req.body.product;
-//   console.log("productId", productId)
-//   try {
-//     // Find and delete the bookmark
-//     // Take user id from query
-//     // Find record of that user id with unique _id
-//     // 
-//     /*
-//       {
-//         _id:
-//         userId:
-//         products: [productId]
-//       }
-//     */
-//     await Bookmark.findOneAndDelete({ user: userId, product: productId });
-
-//     res.status(200).json({ message: 'Bookmark deleted successfully' });
-//   } catch (error) {
-//     console.error('Error deleting bookmark:', error);
-//     res.status(500).json({ error: 'Internal server error' });
-//   }
-// };
 exports.deleteBookmark = async (req, res) => {
   const userId = req.params.userId;
   const productId = req.body.product;

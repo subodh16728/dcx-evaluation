@@ -6,14 +6,21 @@ import "./CSS/Table.css";
 
 
 const Wishlist = () => {
+    const token=localStorage.getItem("token");
+    const navigate = useNavigate();
+  
     const [wishlistItems, setWishlistItems] = useState([]);
     const [productDetails, setProductDetails] = useState({});
-    const token=localStorage.getItem("token");
+    
     const userId=jwtDecode(token).user.id;
             console.log(userId);
+            useEffect(() => {
+                if (!token) {
+                    navigate("/login")
+                }
+            }, [])
      
-    const navigate = useNavigate();
-
+   
 
     useEffect(() => {                                 
         const fetchWishlistItems = async () => {

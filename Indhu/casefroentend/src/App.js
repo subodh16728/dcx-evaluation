@@ -1,4 +1,4 @@
-import React,{useState,createContext} from 'react';
+
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Register from './components/Register';
@@ -15,20 +15,17 @@ import Header from './components/Header';
 
 
 
-
-export const store=createContext();
-
 function App() {
-  const [token,setToken]=useState(null);
+
 
   return (
-   <store.Provider value={[token,setToken]}>
+  
     <BrowserRouter>
-    {/* Conditionally render Header and Nav based on token existence */}
-    {token && <Header />}
-    {token && <Nav />}
     
-   
+    
+    <Header/>
+    <Nav/>
+    
     <ToastContainer/>
       <Routes>
  
@@ -46,7 +43,7 @@ function App() {
  
       </Routes>
     </BrowserRouter>
-    </store.Provider>
+    
   );
 }
 

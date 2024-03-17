@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from "react-router-dom";
@@ -8,6 +8,13 @@ import { toast } from "react-toastify";
 
 export default function ProductForm() {
     const navigate = useNavigate();
+    const token = localStorage.getItem("token")
+ 
+    useEffect(() => {
+        if (!token) {
+            navigate("/login")
+        }
+    }, [])
     const [data, setData] = useState({
         pname: "",
         pdescription: "",
