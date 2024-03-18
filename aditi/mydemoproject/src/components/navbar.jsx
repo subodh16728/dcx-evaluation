@@ -1,5 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import {toast} from "react-toastify"; 
+
 
 export default function Nav() {
   const navigate = useNavigate();
@@ -7,8 +9,7 @@ export default function Nav() {
 
   const handleLogOut = () => {
     localStorage.clear();
-    // window.alert("User Logout successfully!");
-    navigate("/");
+    navigate("/signin");
   };
 
   return (

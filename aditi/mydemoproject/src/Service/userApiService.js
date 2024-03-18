@@ -21,6 +21,7 @@ const signInUser = async (user) => {
 }
 
 const getUserById = async (id) => {
+    console.log(id);
     const response = await axios.get(`${baseUrl}/${id}`)
 
     if(response.status == 200){
@@ -29,5 +30,22 @@ const getUserById = async (id) => {
     }
 }
 
+const modifyById = async (id,data) => {
+    try{
+        const response = await axios.put(`${baseUrl}/wishlist/${id}`,data);
+        return response.data;
+    }catch (error){
+        throw new Error("Error wishlisting Product:",error);
+    }
+}
 
-export {signUpUser,signInUser, getUserById}
+const getWishlistedProducts = async (id) => {
+    const response = await axios.get(`${baseUrl}/wishlist/${id}`)
+
+    if(response.status == 200){
+        const users = await response.data;
+        return users;
+    }
+}
+
+export {signUpUser,signInUser, getUserById , modifyById , getWishlistedProducts}

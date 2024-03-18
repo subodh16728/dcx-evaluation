@@ -1,20 +1,36 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import Nav from "./navbar";
-import { modifyById } from "../Service/productApiService";
-import { getBookmarkedProducts } from "../Service/productApiService";
+import { jwtDecode } from "jwt-decode";
+import { modifyById } from "../Service/userApiService";
+import { getWishlistedProducts } from "../Service/userApiService";
+import { toast } from "react-toastify";
 
 const WishList = () => {
   const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("ascending");
+  const [userID, setUserID] = useState(null);
 
-  const populateProduct = async () => {
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    if (!token) {
+      navigate("/signin");
+    } else {
+      const decodedToken = jwtDecode(token);
+      const userID = decodedToken._id;
+      setUserID(userID);
+      populateWishlist(userID); // Fetch wishlist after setting userID
+    }
+  }, [token]);
+
+  const populateWishlist = async (userID) => {
     try {
-      let receivedProduct = await getBookmarkedProducts();
-      if (receivedProduct?.length > 0) {
-        setData(receivedProduct);
-      }
+      let receivedProduct = await getWishlistedProducts(userID);
+      console.log("total products: ", receivedProduct.wishlist);
+      setData(receivedProduct.wishlist);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
@@ -22,19 +38,17 @@ const WishList = () => {
 
   const populateBookmarkedProduct = async (id, data) => {
     try {
-      let receivedProduct = await modifyById(id,data);
+      let receivedProduct = await modifyById(id, data);
       console.log(receivedProduct);
-      if(receivedProduct){
-        populateProduct();
+      if (receivedProduct) {
+        populateWishlist(userID);
       }
-    }catch (error){
+      toast.success(receivedProduct.message);
+    } catch (error) {
       console.error("Error fetching products:", error);
+      toast.error(error.receivedProduct.message);
     }
-  }
-
-  useEffect(() => {
-    populateProduct();
-  }, []);
+  };
 
   const handleSearchInputChange = (e) => {
     setSearchTerm(e.target.value);
@@ -66,26 +80,12 @@ const WishList = () => {
       )
   );
 
-const handleBookmark = (data) => {
-  const productID = data._id
-  const bookmarkToggle =  !data.productBookmarked
-  console.log(data)
-  console.log(productID)
-
-  console.log("Data after click:", bookmarkToggle)
-
-  populateBookmarkedProduct(productID,{productBookmarked:bookmarkToggle});
-
-}
-
-const navigate = useNavigate();
-const token = localStorage.getItem("token");
-  useEffect(() => {
-    if (!token) {
-      navigate("/signin");
-    }
-  }, []);
-
+  const handleBookmark = (data) => {
+    const productID = data._id;
+    console.log(data);
+    console.log(productID);
+    populateBookmarkedProduct(userID, { _id: productID });
+  };
 
   return (
     <>
@@ -107,56 +107,51 @@ const token = localStorage.getItem("token");
             <p className="h4 text-white bg-secondary p-2 text-center">
               Your Wishlist
             </p>
-            <form className="d-flex" role="search">
-              <input
-                type="text"
-                placeholder="Search Product"
-                value={searchTerm}
-                onChange={handleSearchInputChange}
-                className="searchBox mx-auto"
-              />
-            </form>
-            <div>
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th className="sorting-head" onClick={handleSortByName}>
-                      P.Name {sortOrder === "ascending" ? "↑" : "↓"}
-                    </th>
-                    <th>P.Price</th>
-                    <th>P.Category</th>
-                    <th>Wishlist</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredData.map((product) => (
-                    <tr key={product._id}>
-                      <td>
-                        <NavLink to={`/productDetails/${product._id}`}>
-                          {product.productName}
-                        </NavLink>
-                      </td>
-                      <td>{product.productPrice}</td>
-                      <td>{product.productCategory}</td>
-                      <td>
-                        <a
-                          href="#"
-                          onClick={() => handleBookmark(product)}
-                        >
-                          <i
-                            class={`bi ${
-                              product.productBookmarked
-                              ? "bi-bookmark-heart-fill"
-                              : "bi-bookmark-heart"
-                            }`}
-                          ></i>
-                        </a>
-                      </td>
+            {filteredData.length > 0 ? (
+              <div>
+                <form className="d-flex" role="search">
+                  <input
+                    type="text"
+                    placeholder="Search Product"
+                    value={searchTerm}
+                    onChange={handleSearchInputChange}
+                    className="searchBox mx-auto"
+                  />
+                </form>
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th>P.Name</th>
+                      <th>P.Price</th>
+                      <th>P.Category</th>
+                      <th>Wishlist</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {filteredData.map((product) => (
+                      <tr key={product._id}>
+                        <td>
+                          <NavLink to={`/productDetails/${product._id}`}>
+                            {product.productName}
+                          </NavLink>
+                        </td>
+                        <td>{product.productPrice}</td>
+                        <td>{product.productCategory}</td>
+                        <td>
+                          <a href="#" onClick={() => handleBookmark(product)}>
+                            <i className="bi bi-bookmark-heart-fill"></i>
+                          </a>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="ms-4">
+                <img src="/images/NoWishlist.png" alt="wishlist" />
+              </div>
+            )}
           </div>
         </div>
       </div>

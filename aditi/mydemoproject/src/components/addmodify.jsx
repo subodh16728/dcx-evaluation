@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { postProduct } from "../Service/productApiService";
 import Nav from "./navbar";
+import {toast} from "react-toastify";
 import { modifyById } from "../Service/productApiService";
 import { getProductById } from "../Service/productApiService";
 
@@ -15,8 +16,8 @@ const AddModify = () => {
       console.log(receivedProduct);
       navigate("/product");
     } catch (error) {
-      window.alert("Product already availabe!");
       console.error("Error fetching products:", error);
+      toast.error("Product already availabe!");
     }
   };
 
@@ -74,7 +75,7 @@ const AddModify = () => {
         if (isDataModified) {
           populateModifiedProduct(id, data);
         } else {
-          window.alert("update atleast any one filed.")
+          toast.error("update atleast any one filed.")
           console.log("No changes made");
         }
       } else {

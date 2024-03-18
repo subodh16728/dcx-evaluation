@@ -1,4 +1,5 @@
 const User = require("../models/usersModel");
+const Product = require("../Models/productModel");
 const jwt = require("jsonwebtoken");
 const bcryptjs = require("bcryptjs");
 
@@ -12,6 +13,8 @@ exports.getUsers = (req, res) => {
       res.status(400).send({ error: err });
     });
 };
+
+
 // get user by id
 exports.getUserById = (req, res) => {
   const id = req.params.id;
@@ -27,6 +30,9 @@ exports.getUserById = (req, res) => {
     res.status(401).send(`User with id ${id} does not exist`);
   }
 };
+
+
+
 //user signUp
 exports.userSignUp = async (req, res) => {
   try {
@@ -104,6 +110,7 @@ exports.userSignUp = async (req, res) => {
   }
 };
 
+
 //user signin
 exports.userSignin = async (req, res) => {
   try {
@@ -177,3 +184,67 @@ exports.userSignin = async (req, res) => {
     });
   }
 };
+
+
+exports.wishlist = async (req, res) => {
+  const id = req.params.id;
+  const { _id } = req.body;
+
+  try {
+    const user = await User.findById(id);
+    const product = await Product.findById(_id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+      const index = user.wishlist.indexOf(_id);
+      if (index > -1) {
+        // If the product is already in the wishlist, remove it first
+        user.wishlist.splice(index, 1);
+        await user.save();
+        return res.status(201).json({ message: 'Product removed from wishlist successfully' });
+      }else {
+      user.wishlist.push(_id);
+      await user.save();
+      return res.status(201).json({ message: 'Product added to wishlist successfully' });
+    }
+  } catch (err) {
+    console.error('Error updating wishlist:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+exports.getWishlistById = async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    const user = await User.findById(userId, 'wishlist');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const wishlistWithDetails = await Promise.all(
+      user.wishlist.map(async productId => {
+        try {
+          const product = await Product.findById(productId);
+          return product;
+        } catch (err) {
+          console.error('Error fetching product:', err);
+          return null;
+        }
+      })
+    );
+
+    const filteredWishlist = wishlistWithDetails.filter(product => product !== null);
+
+    res.status(200).json({ wishlist: filteredWishlist });
+  } catch (err) {
+    console.error('Error fetching wishlist:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
