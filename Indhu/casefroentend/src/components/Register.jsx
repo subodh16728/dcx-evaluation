@@ -3,7 +3,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import React, { useState } from "react";
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { NavLink ,useNavigate} from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 
 export default function Register() {
@@ -15,15 +15,11 @@ export default function Register() {
         password: "",
         confirmpassword: ""
     });
-    const togglePasswordVisibility = () => {
-        setShowPassword(!showPassword);
-      };
-
     const [errors, setErrors] = useState({});
 
     const changeHandler = e => {
         setData({ ...data, [e.target.name]: e.target.value });
-        setErrors({ ...errors, [e.target.name]: '' }); // Clear previous error message
+        setErrors({ ...errors, [e.target.name]: '' }); 
     };
 
     const validateForm = () => {
@@ -34,49 +30,51 @@ export default function Register() {
         }
         if (!data.email.trim()) {
             newErrors.email = 'Email is required';
-        }else if (!/\S+@\S+\.\S+/.test(data.email.trim())) {
+        } else if (!/\S+@\S+\.\S+/.test(data.email.trim())) {
             newErrors.email = 'Invalid email format';
         }
         if (!data.password.trim()) {
             newErrors.password = 'Password is required';
-        }
-        else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(data.password.trim())) {
+        } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(data.password.trim())) {
             newErrors.password = 'Password must have at least 8 characters, 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special symbol';
         }
         if (!data.confirmpassword.trim()) {
             newErrors.confirmpassword = 'Confirm Password is required';
         } else if (data.confirmpassword !== data.password) {
-            newErrors.confirmpassword = 'Passwords and confirm password is same';
+            newErrors.confirmpassword = 'Passwords and confirm password must match';
         }
 
         setErrors(newErrors);
-        return Object.keys(newErrors).length === 0; // Returns true if there are no errors
+        return Object.keys(newErrors).length === 0; 
     };
 
     const submitHandler = async (e) => {
         e.preventDefault();
-    
+
         if (validateForm()) {
             try {
                 const res = await axios.post("http://localhost:3000/api/register", data);
                 toast.success(res.data);
-                // Redirect to login page after successful registration
+                // Redirect to login page 
                 navigate('/home');
             } catch (err) {
                 console.error(err);
-                const errormessage=err.response?.data;
-                // Check if the error response contains a message
-                if (errormessage==="User already exists") {
+                const errormessage = err.response?.data;
+                
+                if (errormessage === "User already exists") {
                     toast.error("User already exists");
                 } else {
-                    console.error("Error:",err);
+                    console.error("Error:", err);
                     toast.error("An error occurred. Please try again later.");
                 }
             }
         }
     };
-    
-    
+
+    const handleShowPasswordToggle = () => {
+        setShowPassword(prevState => !prevState);
+    };
+
 
     return (
         <div className="d-flex justify-content-center align-items-center vh-100">
@@ -101,19 +99,31 @@ export default function Register() {
                         <label htmlFor="password">
                             <strong>Password</strong>
                         </label>
-                        <input type={showPassword ? 'text' : 'password'} placeholder="Enter Password" id="password" autoComplete="off" name="password" onChange={changeHandler} className={`form-control rounded-0 ${errors.password && 'is-invalid'}`} />
-                                                <i
-                        className={`password-toggle fas ${showPassword ? 'fa-eye' : 'fa-eye-slash'}`}
-                        onClick={togglePasswordVisibility}
-                        ></i>   
+                        <input
+                            type={showPassword ? 'text' : 'password'} 
+                            placeholder="Enter password"
+                            id="password"
+                            autoComplete="off"
+                            name="password"
+                            onChange={changeHandler}
+                            className={`form-control rounded-0 ${errors.password && 'is-invalid'}`}
+                        />
+                        <div>
+                            <input
+                                type="checkbox"
+                                id="showPassword"
+                                className="check"
+                                onChange={handleShowPasswordToggle} 
+                            />
+                            <label htmlFor="showPassword" className="form-check-label"> &nbsp; Show Password</label>
+                        </div>
                         {errors.password && <div className="invalid-feedback">{errors.password}</div>}
-
                     </div>
                     <div className="mb-3">
                         <label htmlFor="confirmpassword">
                             <strong>Confirm Password</strong>
                         </label>
-                        <input type={showPassword ? 'text' : 'password'} placeholder="Confirm Password" id="confirmpassword" autoComplete="off" name="confirmpassword" onChange={changeHandler} className={`form-control rounded-0 ${errors.confirmpassword && 'is-invalid'}`} />
+                        <input type="password" placeholder="Confirm Password" id="confirmpassword" autoComplete="off" name="confirmpassword" onChange={changeHandler} className={`form-control rounded-0 ${errors.confirmpassword && 'is-invalid'}`} />
                         {errors.confirmpassword && <div className="invalid-feedback">{errors.confirmpassword}</div>}
                     </div>
                     <button type="submit" className="btn btn-success w-100 rounded-0">Register</button>

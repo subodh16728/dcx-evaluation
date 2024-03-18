@@ -1,6 +1,7 @@
 // const usermodel=require("../Models/RegisterModel");
 const usermodel=require("../Models/RegisterModel");
 const jwt=require("jsonwebtoken")
+const bcrypt=require("bcrypt");
 
 exports.getAllUsers=(req,res)=>{
     usermodel.find()
@@ -20,11 +21,13 @@ exports.createUser=async(req,res)=>{
       if(password !== confirmpassword){
           return res.status(400).send('Passwords not matches');
       }
+      const hash=await bcrypt.hash(password, 10);
+      
       let newUser=new usermodel({
           name,
           email,
-          password,
-          confirmpassword
+          password:hash,
+          
       })
       await newUser.save();
       res.status(200).send('registered successfully')
@@ -39,26 +42,30 @@ exports.createUser=async(req,res)=>{
 exports.loginUser=async(req,res)=>{
     try{
         const {email,password}=req.body;
-        let exist=await usermodel.findOne({email})
-        if(!exist){
-            return res.status(400).send("User Not Found")
+        
+        if(!email || !password){
+            return res.status(400).send("Email or password required");
         }
-        if(exist.password!==password){
-            return res.status(400).send("Invalid Credentials")
+        const user=await usermodel.findOne({email})
+        if(!user){
+            return res.status(401).send("Invalid Email");
+        }
+        if (!bcrypt.compareSync(password, user.password)) {
+            return res.status(401).json({ message: "Invalid  password" });
         }
         let payload={
             user:{
-                id:exist.id
+                id:user.id
             }, 
             email: email
 
         }
-        jwt.sign(payload,"indhu",{expiresIn:36000000},
-        (err,token)=>{
-            if(err) throw err;
-            return res.json({token})
-        }
-        )
+        const token=jwt.sign(payload,"indhu",{expiresIn:36000000})
+        
+            res.status(200).json({message:"Login successfull",token:token})
+          
+        
+        
 
     }
     catch(err){

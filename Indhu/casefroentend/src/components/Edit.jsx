@@ -53,10 +53,7 @@ const ProfileEdit = () => {
                     <label htmlFor="name" className="col-form-label">Full Name:</label>
                     <input type="text" className="form-control" value={formData.name} id="name" onChange={handleChange} name="name" />
                 </div>
-                {/* <div className="form-group">
-                    <label htmlFor="email" className="col-form-label">Email:</label>
-                    <input type="email" className="form-control" value={formData.email} id="email" onChange={handleChange} name="email" />
-                </div> */}
+                
                 <div className="form-group">
                     <label htmlFor="age" className="col-form-label">Age:</label>
                     <input type="number" className="form-control" value={formData.age} id="age" onChange={handleChange} name="age" />

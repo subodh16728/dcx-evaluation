@@ -43,7 +43,7 @@ function Userprofile() {
         }
     };
  
-    // Call the ProfileHandler function when the component mounts
+    
     useEffect(() => {
         ProfileHandler();
     }, []);
@@ -67,18 +67,9 @@ function Userprofile() {
                                         </div>
                                     </h1>
                                 </div>
- 
- 
- 
- 
- 
- 
- 
                                 <div className="row">
  
- 
                                     <div className="col-md-6">
- 
  
                                         <p><strong>Name:</strong> {data1.name}</p>
                                         <p><strong>Email:</strong> {data1.email}</p>

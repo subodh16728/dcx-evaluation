@@ -29,7 +29,7 @@ export default function ProductForm() {
 
     const changeHandler = e => {
         setData({ ...data, [e.target.name]: e.target.value });
-        setErrors({ ...errors, [e.target.name]: "" }); // Clear previous error message
+        setErrors({ ...errors, [e.target.name]: "" }); 
     };
 
     const submitHandler = async(e) => {
@@ -69,10 +69,10 @@ export default function ProductForm() {
                 navigate('/home');
             } catch (err) {
                 console.error(err);
-                console.log(err.response?.data); // Log error response data
-                // Handle error, e.g., show error message to the user
+                console.log(err.response?.data); 
+                
                 const errormessage=err.response?.data;
-                // Check if the error response contains a message
+                
                 if (errormessage==="Product already exists") {
                     toast.error("Product already exists");
                 } else {
