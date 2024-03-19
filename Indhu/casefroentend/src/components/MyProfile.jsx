@@ -1,10 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, NavLink } from 'react-router-dom';
+import { NavLink ,useNavigate} from 'react-router-dom';
 
 import axios from 'axios';
 
  
 function Userprofile() {
+
+    const token = localStorage.getItem("token")
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (!token) {
+            navigate("/login")
+        }
+    }, [])
     const [data1, setData] = useState({
         name: "",
         email: "",
@@ -13,18 +21,12 @@ function Userprofile() {
        
     });
  
-    const navigate = useNavigate();
+    
      const userId = localStorage.getItem('userId');
      console.log(userId);
    
    
-    // useEffect(() => {
-    //     const jwtToken = Cookies.get('jwtToken');
- 
-    //     if (!jwtToken) {
-    //         navigate('/');
-    //     }
-    // }, [navigate]);
+    
  
     const ProfileHandler = async (userId) => {
         try {
@@ -41,7 +43,7 @@ function Userprofile() {
         }
     };
  
-    // Call the ProfileHandler function when the component mounts
+    
     useEffect(() => {
         ProfileHandler();
     }, []);
@@ -65,18 +67,9 @@ function Userprofile() {
                                         </div>
                                     </h1>
                                 </div>
- 
- 
- 
- 
- 
- 
- 
                                 <div className="row">
  
- 
                                     <div className="col-md-6">
- 
  
                                         <p><strong>Name:</strong> {data1.name}</p>
                                         <p><strong>Email:</strong> {data1.email}</p>

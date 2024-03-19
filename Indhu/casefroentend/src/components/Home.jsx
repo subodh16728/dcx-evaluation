@@ -1,25 +1,53 @@
 // Home.js
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from 'react-toastify';
-import { store } from "../App";
-import { Navigate, NavLink } from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 import axios from "axios";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./CSS/Table.css";
-import { jwtDecode } from "jwt-decode";
 
-
-// Your component code goes here...
 
 
 
 const Home = () => {
-    const [token, setToken] = useContext(store);
     const [userData, setUserData] = useState(null);
     const [tableData, setTableData] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [searchResults, setSearchResults] = useState([]);
+    const[wishlist,setWishlist]=useState([]);
+    const navigate= useNavigate();
+    
+const token = localStorage.getItem("token")
+ 
+    useEffect(() => {
+        if (!token) {
+            navigate("/login")
+        }
+    }, [])
+    
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const userId = localStorage.getItem("userId");
+                const response = await fetch(`http://localhost:3000/api/bookmark/${userId}`);
+                const data = await response.json();
+     
+                // Check if the product property exists in the response
+                if (data[0] && data[0].product) {
+                    const dataArray = data[0].product;
+                    setWishlist(dataArray);
+                } else {
+                    console.error('Product data not found in response:', data);
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+     
+        fetchData();
+    }, []);
+    
 
     useEffect(() => {
         // Fetch user data
@@ -31,7 +59,9 @@ const Home = () => {
         .then(res => setUserData(res.data))
         
         .catch(err => console.log(err));
-        // console.log(token);
+        console.log(token);
+
+
 
         // Fetch table data
         axios.get("http://localhost:3000/api/table", {
@@ -41,10 +71,15 @@ const Home = () => {
         })
         .then(res => {
             setTableData(res.data);
-            setSearchResults(res.data); // Initialize search results with all table data
+            setSearchResults(res.data); 
         })
         .catch(err => console.log(err));
-    }, [token]); // Fetch data whenever token changes or on initial mount
+       
+
+
+        
+    }, [token]); 
+     
     
     const handleSearch = (e) => {
         setSearchTerm(e.target.value);
@@ -54,40 +89,38 @@ const Home = () => {
         setSearchResults(results);
     };
   
-    const handleBookmark = async(pId,pName) => {
-        const token=localStorage.getItem("token");
-
-        
-        try{
-            const UserId=jwtDecode(token).user.id;
-            console.log(UserId);
-            console.log(token);
-        console.log(pId)
-            // localStorage.setItem(UserId)
-            
-            await axios.post(`http://localhost:3000/api/bookmark/add/${UserId}`, { product: pId });
-            toast.success(`Product "${pName}" added to wishlist successfully`);
+    
+    const handleremoveproduct = async (pid) => {
+        try {
+            await axios.delete(`http://localhost:3000/api/table/${pid}`);
+            setTableData(prevTableData => prevTableData.filter(product => product._id !== pid));
+            toast.success("Product removed successfully");
+        } catch (error) {
+            console.error('Error:', error);
+            toast.error('Failed to remove product');
         }
-        catch(error){
-            const errorMessage=error.response?.data;
-            console.log(errorMessage.error)
-            if(errorMessage.error==="Product already in wishlist"){
-
-                toast.error(`Product is already in your wishlist `);
-            }else{
-                console.error('Error:',error);
-                toast.error('Failed to add product')
-            }
-
-        }
-
-   
     };
 
-    if (!token) {
-        return <Navigate to="/login" />;
-    }
 
+    const addToWishlist = async (pId) => {
+        try {
+           const UserId=localStorage.getItem("userId");
+           console.log(UserId);
+            const response = await axios.put(`http://localhost:3000/api/bookmark/add/${UserId}`, { product: pId })
+            console.log(response.data.product);
+            setWishlist(response.data.product);
+            // console.log(wishlist)
+        } catch (error) {
+            console.error('Error adding to wishlist:', error);
+        }
+    };
+
+    const isProductInWishlist = (prodId) => {
+        return wishlist && wishlist.includes(prodId);
+    };
+ 
+ 
+   
     return (
         <div>
             
@@ -115,6 +148,7 @@ const Home = () => {
                             <th>Product Description</th>
                             <th>Product Price</th>
                             <th>Wishlist</th>
+                            <th>Delete</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -124,15 +158,27 @@ const Home = () => {
                                 <td>{product.pdescription}</td>
                                 <td>{product.pprice}</td>
                                 <td>
-                                    <a href="javascript:void(0)" onClick={() => handleBookmark(product._id,product.pname)}>
-                                        <i className={`bi ${
-                                            product.productBookmarked
-                                                ? "bi-bookmark-fill"
-                                                : "bi-bookmark"
-                                            }`}
-                                        ></i>
-                                    </a>
-                                </td>
+                                                        
+                                                           
+                                {wishlist && wishlist.length > 0 && (
+                                                            isProductInWishlist(product._id) ? (
+                                                                <button onClick={() => addToWishlist(product._id)} className='btn btn-danger'>
+                                                                    <i className="bi bi-heart-fill"></i>
+                                                                </button>
+                                                            ) : (
+                                                                <button onClick={() => addToWishlist(product._id)} className='btn btn-success'>
+                                                                    <i className="bi bi-heart"></i>
+                                                                </button>
+                                                            )
+                                                        )}
+                                                        {wishlist && wishlist.length === 0 && (
+                                                            <button onClick={() => addToWishlist(product._id)} className='btn btn-success'>
+                                                                <i className="bi bi-heart"></i>
+                                                            </button>
+                                                        )}
+                                                    </td>
+                                
+                                <td> <button className='w-pbutton' onClick={() => { handleremoveproduct(product._id) }}>Delete</button></td>
                                 
                             </tr>
                         ))}

@@ -1,9 +1,29 @@
-import React,{useContext} from "react";
+
 import "./CSS/Header.css";
-import { NavLink } from "react-router-dom";
-import { store } from "../App";
+import React,{useEffect} from "react";
+import { NavLink ,useNavigate,useLocation} from "react-router-dom";
+
+
 export default function Header() {
-    const [token,setToken]=useContext(store);
+    const token = localStorage.getItem("token")
+ 
+    useEffect(() => {
+        if (!token) {
+            navigate("/login")
+        }
+    }, [])
+  
+    const location=useLocation();
+    const navigate=useNavigate();
+
+    const hiddenPaths = [ '/', '/login'];
+    if (hiddenPaths.includes(location.pathname)) {
+        return null;
+    }
+    const handleLogOut = () => {
+        localStorage.clear()
+        navigate("/login")
+    }
     return (
 
         <div className="bodyy">
@@ -13,10 +33,10 @@ export default function Header() {
                     The Mobile Products
                 </div>
             
-                {/* <NavLink className="nav-link" to="/myprofile">Logout</NavLink> */}
-                <button onClick={()=>setToken(null)} className="nav-link">  Logout</button>
+              
+                <button onClick={handleLogOut} className="nav-link">  Logout</button>
                 <NavLink className="nav-link" to="/wishlist">Wishlist</NavLink>
-                {/* <NavLink className="nav-link" to="/offers">My Offers</NavLink> */}
+        
 
             </header>
         </div>

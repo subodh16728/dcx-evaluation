@@ -1,6 +1,23 @@
-import { NavLink } from "react-router-dom";
+import { NavLink,useLocation ,useNavigate} from "react-router-dom";
+import React,{useEffect} from "react";
 
 export default function Nav() {
+
+  const navigate = useNavigate();
+  let token = localStorage.getItem("token");
+
+    useEffect(() => {
+        if (!token) {
+            navigate("/login")
+        }
+    }, [])
+
+  const location=useLocation();
+
+  const hiddenPaths = [ '/', '/login'];
+    if (hiddenPaths.includes(location.pathname)) {
+        return null;
+    }
   return (
     <nav className="navbar navbar-expand-lg" style={{ backgroundColor: '#E34C77' }}>
       <div className="container-fluid">
