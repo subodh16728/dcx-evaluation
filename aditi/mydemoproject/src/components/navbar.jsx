@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import {toast} from "react-toastify"; 
-
+import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 export default function Nav() {
   const navigate = useNavigate();
@@ -9,8 +9,12 @@ export default function Nav() {
 
   const handleLogOut = () => {
     localStorage.clear();
-    navigate("/signin");
+    toast.success("You have been logged out.", { autoClose: 1000 });
+    navigate("/");
   };
+
+  const data = useSelector((state) => state.api.data);
+
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -32,47 +36,54 @@ export default function Nav() {
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
-              <a className="nav-link active" aria-current="page" href="/">
-                Dashboard
-              </a>
-            </li>
-            <li className="nav-item">
-              <a
+              <NavLink
                 className="nav-link active"
                 aria-current="page"
-                href="/product"
+                to="/"
               >
                 Products
-              </a>
+              </NavLink>
             </li>
             <li className="nav-item">
-              <a
+              <NavLink
                 className="nav-link active"
                 aria-current="page"
-                href="/product/add"
+                to="/product/add"
               >
                 Add Product
-              </a>
+              </NavLink>
             </li>
             <li className="nav-item">
-              <a
+              <NavLink
                 className="nav-link active"
                 aria-current="page"
-                href="/product/offer"
+                to="/product/offer"
               >
                 Offers
-              </a>
+              </NavLink>
             </li>
             <li className="nav-item">
-              <a
+              <NavLink
                 className="nav-link active"
                 aria-current="page"
-                href="/product/wishlist"
+                to="/product/wishlist"
               >
                 Wishlist
-              </a>
+              </NavLink>
             </li>
           </ul>
+          <div className="navbar-text me-3">
+            {token && data && data.username ? (
+              <>
+                <NavLink className="nav-link">
+                  <i className="fa fa-user" aria-hidden="true"></i>
+                </NavLink>
+                <b><span className="text-white">Welcome {data.username}!</span></b>
+              </>
+            ) : (
+              <b><span className="text-white">Welcome Guest!</span></b>
+            )}
+          </div>
           <div>
             {token ? (
               <button

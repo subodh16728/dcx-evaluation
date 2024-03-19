@@ -17,7 +17,7 @@ const AddModify = () => {
       navigate("/product");
     } catch (error) {
       console.error("Error fetching products:", error);
-      toast.error("Product already availabe!");
+      toast.error("Product already availabe!",{autoClose:1000});
     }
   };
 
@@ -75,7 +75,7 @@ const AddModify = () => {
         if (isDataModified) {
           populateModifiedProduct(id, data);
         } else {
-          toast.error("update atleast any one filed.")
+          toast.error("update atleast any one filed.",{autoClose:1000})
           console.log("No changes made");
         }
       } else {
@@ -100,13 +100,13 @@ const AddModify = () => {
  const token = localStorage.getItem("token");
   useEffect(() => {
     if (!token) {
+      toast.success("Please login first.",{autoClose:1000})
       navigate("/signin");
     }
   }, []);
 
   return (
     <>
-      <Nav />
       <div
         className="row"
         style={{
