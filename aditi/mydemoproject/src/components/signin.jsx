@@ -4,6 +4,9 @@ import Nav from "./navbar";
 import Joi from "joi";
 import { useNavigate } from "react-router-dom";
 import { signInUser } from "../Service/userApiService";
+import { useDispatch } from 'react-redux';
+import { fetchUserDetails } from '../store/slice/getUserslice';
+import { jwtDecode } from "jwt-decode";
 
 function SignIn() {
   const [user, setUser] = useState({
@@ -11,13 +14,19 @@ function SignIn() {
     password: "",
   });
 
+  const dispatch = useDispatch();
+
   const signInUserInfo = async () => {
     try {
       let receivedInfo = await signInUser(user);
       console.log(receivedInfo);
       localStorage.setItem("token", receivedInfo.token);
+      if (receivedInfo) {
+        const decodedToken = jwtDecode(receivedInfo.token);
+        console.log(decodedToken._id);
+        dispatch(fetchUserDetails(decodedToken._id));
+      }
       navigate("/");
-      window.location.reload();
     } catch (err) {
       console.log(err);
       setErrRes(err);
@@ -67,12 +76,11 @@ function SignIn() {
 
   return (
     <>
-      <Nav />
       <div
         className="row"
         style={{
           minHeight: "100vh",
-          backgroundImage: 'url("images/login.jpg")',
+          backgroundImage: 'url("/images/login.jpg")',
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
           backgroundAttachment: "fixed",
@@ -131,10 +139,9 @@ function SignIn() {
               </div>
               <div className="m-2">
                 <p>
-                  <small>Don't have an account?</small>
+                  <small> Don't have an account? </small>
                   <Link to="/signup" className="link">
-                    {" "}
-                    Signup
+                    <b>Signup</b>
                   </Link>
                 </p>
               </div>
