@@ -3,12 +3,15 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Joi from "joi";
 import Cookie from "js-cookie"
 import axios from 'axios';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Products = () => {
 
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
+    const [isModified, setIsModified] = useState(false);
     const [data, setData] = useState({
         title: "",
         category: "",
@@ -16,21 +19,26 @@ const Products = () => {
         description: ""
     });
 
-    const [isModified, setIsModified] = useState(false);
+    const params = useParams()
+    const id = params.id;
 
     // authentication using jwt token
     const token = Cookie.get("token")
     useEffect(() => {
         if (!token) {
             navigate("/login")
+        } else if (id !== undefined) {
+            handleProducts()
         }
+
     }, [])
 
     const productSchema = Joi.object({
         title: Joi.string().required(),
         category: Joi.string().required(),
         price: Joi.number().required(),
-        description: Joi.string().required()
+        description: Joi.string().required(),
+        updatedAt: Joi.any().strip()
     });
 
     const handleChange = (e) => {
@@ -42,30 +50,21 @@ const Products = () => {
         setIsModified(true);
     };
 
-    console.log("data", data);
+    const handleProducts = async () => {
+        try {
+            const response = await axios.get(`http://localhost:5000/api/products/${id}`, { headers: { Authorization: `Bearer ${token}` } })
+            const { _id, __v, bookmarked, ...updatedData } = response.data;
+            setData(updatedData);
+        } catch (error) {
+            console.error(error)
+        }
 
-    const params = useParams()
-    console.log("Params is: ", params.id)
-    const id = params.id;
-
-    useEffect(() => {
-        const response = axios.get(`http://localhost:5000/api/products/${id}`)
-            .then((data) => {
-                console.log("Fetch data using id is: ", data)
-                console.log(data.data)
-                const { _id, __v, bookmarked, ...updatedData } = data.data;
-                setData(updatedData);
-            })
-            .catch((err) => {
-                console.error(err);
-            })
-    }, [])
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (loading) {
-            // If a request is already in progress, ignore subsequent submissions
             return;
         }
 
@@ -78,7 +77,6 @@ const Products = () => {
             error.details.forEach((err) => {
                 valErr[err.path[0]] = err.message;
             });
-            console.log("Validation: ", valErr);
             setErrors(valErr);
             return;
         }
@@ -87,33 +85,20 @@ const Products = () => {
 
         try {
             if (id) {
-                const response = await axios.put(`http://localhost:5000/api/products/edit/${id}`, data);
-                console.log("Data is: ", data);
-                console.log(`Response is: ${response.data}`);
-                if (response.status === 201) {
-                    alert("Product updated successfully");
+                const response = await axios.put(`http://localhost:5000/api/products/edit/${id}`, data, { headers: { Authorization: `Bearer ${token}` } });
+                if (response.status === 204) {
+                    toast.success("Product updated successfully");
                     navigate("/dashboard");
-                } else {
-                    console.log("Error updating products");
                 }
             } else {
-                const response = await axios.post("http://localhost:5000/api/products/add", json);
-                console.log("Response data is: ", response.data);
+                const response = await axios.post("http://localhost:5000/api/products/add", json, { headers: { Authorization: `Bearer ${token}` } });
                 if (response.status === 201) {
-                    alert("Product created successfully");
+                    toast.success("Product created successfully");
                     navigate('/dashboard');
-                } else {
-                    console.log("Error creating products");
                 }
             }
         } catch (error) {
-            if (id) {
-                alert("Product already exists");
-                console.log("Update operation failed");
-            } else {
-                alert("Product already exists")
-                console.log("Product creation failed");
-            }
+            toast.error("Product already exists");
         } finally {
             setLoading(false);
             setErrors({});

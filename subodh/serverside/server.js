@@ -7,6 +7,7 @@ const dotenv = require("dotenv");
 const productRoute = require("./routes/productRoute");
 const offerRoute = require("./routes/offerRoute");
 const userRoute = require("./routes/userRoute");
+const bookmarksRoute = require("./routes/bookmarksRoute")
 const connectDB = require("./Database/database");
 // const userRoute = require("./routes/userRoute");
 
@@ -21,6 +22,7 @@ const PORT = 5000 || process.env.PORT
 app.use("/api/products", productRoute);
 app.use("/api", userRoute);
 app.use("/api/offers", offerRoute)
+app.use("/api", bookmarksRoute)
 // app.use("/api/users", userRoute)
 
 connectDB()
