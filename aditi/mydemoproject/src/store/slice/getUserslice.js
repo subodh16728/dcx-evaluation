@@ -1,34 +1,34 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import Cookie from "js-cookie";
-import axios from "axios";
 
 // Action
-export const fetchProducts = createAsyncThunk("fetchProducts", async (search) => {
-    const token = Cookie.get("token")
-    const response = await axios.get(`http://localhost:5000/api/products?search=${search}`, { headers: { Authorization: `Bearer ${token}` } });
-    return response.data;
-});
+export const fetchUserDetails = createAsyncThunk("fetchUserDetails", async (id) => {
+    console.log("id :" + id);
+    const response = await fetch(`http://localhost:4000/api/users/${id}`)
+    console.log(response)
+    return response.json()
+})
 
 const apiSlice = createSlice({
     name: "fetchapi",
     initialState: {
         isLoading: false,
         data: null,
-        isError: false
+        isError: false,
     },
     extraReducers: (builder) => {
-        builder.addCase(fetchProducts
+        builder.addCase(fetchUserDetails
             .pending, (state) => {
                 state.isLoading = true;
             });
-        builder.addCase(fetchProducts
+        builder.addCase(fetchUserDetails
             .fulfilled, (state, action) => {
                 state.isLoading = false;
                 state.data = action.payload;
             });
-        builder.addCase(fetchProducts
+        builder.addCase(fetchUserDetails
             .rejected, (state, action) => {
                 state.isError = true;
+                console.log("Error: ", action.payload);
             });
     }
 })

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getproducts } from "../Service/productApiService";
+import { getproducts, getsearchedProducts } from "../Service/productApiService";
 import { NavLink, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import Nav from "./navbar";
@@ -29,19 +29,33 @@ const Product = () => {
     }
   };
 
-  const populateBookmarkedProduct = async (id, data) => {
+  const populateWishlistedProduct = async (id, data) => {
     try {
       let receivedProduct = await modifyById(id, data);
       console.log(receivedProduct);
-      if (receivedProduct) {
-        populateProduct();
-      }
-      toast.success(receivedProduct.message);
+      toast.success(receivedProduct.message,{autoClose:1000});
     } catch (error) {
       console.error("Error fetching products:", error);
-      toast.error(error.receivedProduct.message);
+      toast.error(error.receivedProduct.message,{autoClose:1000});
     }
   };
+
+  const searchedProducts = async (searchTerm) => {
+
+    try {
+      let receivedProduct = await getsearchedProducts(searchTerm);
+        setData(receivedProduct);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+}
+
+  useEffect(() => {
+    let timerOut = setTimeout ( () => {
+      searchedProducts(searchTerm);
+    },1000);
+    return () => clearTimeout (timerOut);
+  }, [searchTerm]);
 
   useEffect(() => {
     populateProduct();
@@ -52,7 +66,7 @@ const Product = () => {
   };
 
   const handleSortByName = () => {
-    const sortedData = filteredData;
+    const sortedData = data;
     sortedData.sort((a, b) => {
       const nameA = a.productName.toLowerCase();
       const nameB = b.productName.toLowerCase();
@@ -68,32 +82,23 @@ const Product = () => {
     setData(sortedData);
   };
 
-  const filteredData = data.filter(
-    (item) =>
-      (item.productName &&
-        item.productName.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      item.productCategory.some((category) =>
-        category.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-  );
-
   const handleBookmark = (data) => {
   
     if (!token) {
+      toast.success("Please login first.",{autoClose:1000})
       navigate("/signin");
     }else{
       const productID = data._id;
       const userID = decodedToken._id;
       console.log(data);
       console.log(productID);
-      populateBookmarkedProduct(userID, { _id: productID });
+      populateWishlistedProduct(userID, { _id: productID });
     }
     
   };
 
   return (
     <>
-      <Nav />
       <div
         className="row"
         style={{
@@ -114,13 +119,14 @@ const Product = () => {
             <form className="d-flex" role="search">
               <input
                 type="text"
-                placeholder="Search Product"
+                placeholder="Search for Product "
                 value={searchTerm}
                 onChange={handleSearchInputChange}
                 className="searchBox mx-auto"
               />
             </form>
             <div>
+            {data.length > 0 ? (
               <table className="table">
                 <thead>
                   <tr>
@@ -134,7 +140,7 @@ const Product = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredData.map((product) => (
+                  {data.map((product) => (
                     <tr key={product._id}>
                       <td>
                         <NavLink to={`/productDetails/${product._id}`}>
@@ -148,13 +154,6 @@ const Product = () => {
                           href="#"
                           onClick={() => handleBookmark(product)}
                         >
-                          {/* <i
-                            class={`bi ${
-                              product.productBookmarked
-                                ? "bi-bookmark-heart-fill"
-                                : "bi-bookmark-heart"
-                            }`}
-                          ></i> */}
                           <i
                             class={"bi bi-bookmark-heart-fill"}
                           ></i>
@@ -171,6 +170,9 @@ const Product = () => {
                   ))}
                 </tbody>
               </table>
+              ) : (
+                <p className="text-center mt-3">No items found.</p>
+              )}
             </div>
           </div>
         </div>

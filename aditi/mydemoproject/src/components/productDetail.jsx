@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getProductById } from "../Service/productApiService";
 import Nav from "./navbar";
+import {toast} from "react-toastify"
 
 export default function ProductDetails() {
   const [data, setData] = useState({});
@@ -20,6 +21,7 @@ export default function ProductDetails() {
   const token = localStorage.getItem("token");
   useEffect(() => {
     if (!token) {
+      toast.success("Please login first.",{autoClose:1000})
       navigate("/signin");
     }
   }, []);
@@ -33,7 +35,6 @@ export default function ProductDetails() {
 
   return (
     <>
-      <Nav />
       <div
        className="row"
        style={{

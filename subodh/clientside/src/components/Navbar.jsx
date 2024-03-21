@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import Cookie from "js-cookie"
-
 import { NavLink, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const Navbar = () => {
 
@@ -10,8 +10,13 @@ const Navbar = () => {
 
     const handleLogout = () => {
         Cookie.remove("token")
+        Cookie.remove("userID")
         navigate("/")
     }
+
+    const name = useSelector((state) => (
+        state.userDetails.name
+    ))
 
     return (
         <>
@@ -29,19 +34,22 @@ const Navbar = () => {
                             <li className="nav-item">
                                 <NavLink className="nav-link active" aria-current="page" to="/offers">Offers</NavLink>
                             </li>
+                            <li className="nav-item">
+                                <NavLink className="nav-link active" aria-current="page" to="/bookmarks">Bookmarks</NavLink>
+                            </li>
                         </ul>
 
                         <ul className="navbar-nav mb-2 mb-lg-0 ms-auto">
                             {token ? (
                                 <>
                                     <li className="nav-item">
-                                        <NavLink className="nav-link active" onClick={handleLogout} to="/login">
-                                            Logout
+                                        <NavLink className="nav-link active">
+                                            Welcome <b>{name}</b>
                                         </NavLink>
                                     </li>
                                     <li className="nav-item">
-                                        <NavLink className="nav-link active" to="/bookmarks">
-                                            <i className="bi bi-heart-fill"></i>
+                                        <NavLink className="nav-link active" onClick={handleLogout} to="/login">
+                                            Logout
                                         </NavLink>
                                     </li>
                                 </>

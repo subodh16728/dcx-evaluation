@@ -8,7 +8,6 @@ import { toast } from "react-toastify";
 
 const WishList = () => {
   const [data, setData] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("ascending");
   const [userID, setUserID] = useState(null);
 
@@ -17,12 +16,13 @@ const WishList = () => {
 
   useEffect(() => {
     if (!token) {
+      toast.success("Please login first.",{autoClose:1000})
       navigate("/signin");
     } else {
       const decodedToken = jwtDecode(token);
       const userID = decodedToken._id;
       setUserID(userID);
-      populateWishlist(userID); // Fetch wishlist after setting userID
+      populateWishlist(userID);
     }
   }, [token]);
 
@@ -36,26 +36,22 @@ const WishList = () => {
     }
   };
 
-  const populateBookmarkedProduct = async (id, data) => {
+  const populateWishlistedProduct = async (id, data) => {
     try {
       let receivedProduct = await modifyById(id, data);
       console.log(receivedProduct);
       if (receivedProduct) {
         populateWishlist(userID);
       }
-      toast.success(receivedProduct.message);
+      toast.success(receivedProduct.message,{autoClose:1000});
     } catch (error) {
       console.error("Error fetching products:", error);
-      toast.error(error.receivedProduct.message);
+      toast.error(error.receivedProduct.message,{autoClose:1000});
     }
   };
 
-  const handleSearchInputChange = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
   const handleSortByName = () => {
-    const sortedData = filteredData;
+    const sortedData = data;
     sortedData.sort((a, b) => {
       const nameA = a.productName.toLowerCase();
       const nameB = b.productName.toLowerCase();
@@ -71,25 +67,15 @@ const WishList = () => {
     setData(sortedData);
   };
 
-  const filteredData = data.filter(
-    (item) =>
-      (item.productName &&
-        item.productName.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      item.productCategory.some((category) =>
-        category.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-  );
-
   const handleBookmark = (data) => {
     const productID = data._id;
     console.log(data);
     console.log(productID);
-    populateBookmarkedProduct(userID, { _id: productID });
+    populateWishlistedProduct(userID, { _id: productID });
   };
 
   return (
     <>
-      <Nav />
       <div
         className="row"
         style={{
@@ -107,28 +93,21 @@ const WishList = () => {
             <p className="h4 text-white bg-secondary p-2 text-center">
               Your Wishlist
             </p>
-            {filteredData.length > 0 ? (
+            {data.length > 0 ? (
               <div>
-                <form className="d-flex" role="search">
-                  <input
-                    type="text"
-                    placeholder="Search Product"
-                    value={searchTerm}
-                    onChange={handleSearchInputChange}
-                    className="searchBox mx-auto"
-                  />
-                </form>
                 <table className="table">
                   <thead>
                     <tr>
-                      <th>P.Name</th>
+                    <th className="sorting-head" onClick={handleSortByName}>
+                      P.Name {sortOrder === "ascending" ? "↑" : "↓"}
+                    </th>
                       <th>P.Price</th>
                       <th>P.Category</th>
                       <th>Wishlist</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredData.map((product) => (
+                    {data.map((product) => (
                       <tr key={product._id}>
                         <td>
                           <NavLink to={`/productDetails/${product._id}`}>

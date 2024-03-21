@@ -83,5 +83,16 @@ const getBookmarkedProducts = async() =>{
     }
 }
 
+const getsearchedProducts = async(searchTerm) =>{
+    const response = await axios.get(`${baseUrl}/search/getProduct?q=${searchTerm}`)
+    if (response.status === 200) {
+        const products = await response.data
+        return products
+    }
+    else {
+        return null;
+    }
+}
+
 export { getproducts,getproductByCategory,getNewProducts ,searchProductsByName,
-     getProductById, postProduct, modifyById, getBookmarkedProducts}
+     getProductById, postProduct, modifyById, getBookmarkedProducts, getsearchedProducts}

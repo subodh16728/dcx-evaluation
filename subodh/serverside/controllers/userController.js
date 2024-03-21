@@ -11,7 +11,7 @@ const userSignUp = async (req, res) => {
         const user = await User.findOne({ email: req.body.email })
 
         if (user) {
-            return res.status(400).json({
+            return res.status(200).json({
                 message: "User already exists",
                 error: true,
                 success: false
@@ -38,6 +38,7 @@ const userSignUp = async (req, res) => {
 
                 const userDetails = new User(payload)
                 const save = await userDetails.save()
+                console.log(save)
 
                 return res.status(200).json({
                     message: "Account created successfully",
@@ -104,6 +105,7 @@ const userSignin = async (req, res) => {
 
             res.status(200).json({
                 token: token,
+                userID: user._id,
                 error: false,
                 success: true,
                 message: "Login successfully"
@@ -119,4 +121,16 @@ const userSignin = async (req, res) => {
     }
 }
 
-module.exports = { userSignUp, userSignin };
+// get users by id
+const getUserByID = (req, res) => {
+    const id = req.params.id;
+    User.findById(id)
+        .then((data) => {
+            res.status(200).json(data)
+        })
+        .catch((err) => {
+            res.status(400).send(err)
+        })
+}
+
+module.exports = { userSignUp, userSignin, getUserByID };
