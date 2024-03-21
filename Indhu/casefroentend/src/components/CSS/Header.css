@@ -84,7 +84,7 @@ nav li {
     text-decoration: none;
     color: #FFFFFF;
     text-shadow: 0.4px 0.4px #222222;
-    margin-left: 13px;
+    margin-left: 0px;
     text-align: center;
     display: block;
     padding: 8px;
@@ -326,4 +326,9 @@ nav ul li.searchBox1 {
     .icon {
         display: none;
     }
+}
+
+.welcomeMessage {
+    text-align: center; /* Center the text horizontally */
+    color: white; /* Set text color to white */
 }

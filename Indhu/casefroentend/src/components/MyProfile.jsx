@@ -28,7 +28,7 @@ function Userprofile() {
    
     
  
-    const ProfileHandler = async (userId) => {
+    const ProfileHandler = async () => {
         try {
             const userId = localStorage.getItem('userId');
             console.log(userId)

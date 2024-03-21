@@ -123,7 +123,7 @@ const Wishlist = () => {
                                             <td>{productDetails[productId].pname}</td>
                                             <td>{productDetails[productId].pdescription}</td>
                                             <td>{productDetails[productId].pprice}</td>
-                                           <td> <button className='w-pbutton' onClick={() => { removeProductFromWishlist(productId) }}>Remove</button></td>
+                                           <td> <button className='w-pbutton' onClick={() => { removeProductFromWishlist(productId) }}><i class="bi bi-trash"></i></button></td>
                                         </React.Fragment>
                                     )}
                                 </tr>

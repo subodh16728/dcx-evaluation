@@ -27,7 +27,7 @@ export default function Offers() {
  
     useEffect(() => {
         if (!token) {
-            toast.info("To see Latest Offers Please Login to you account", { toastId: "khandu" });
+            
             navigate("/login")
         }
         const fetchOffers = async () => {
@@ -53,7 +53,7 @@ export default function Offers() {
             axios.post("http://localhost:3000/api/myoffers/sendmail", { email: decodedToken.email, data })
                 .then((test) => {
                     console.log(test);
-                    alert("Offers send to your Gmail, Check It")
+                    
                     toast.success("Offers sent to you Gmail")
                 }
                 )
@@ -69,12 +69,10 @@ export default function Offers() {
  
     return (
         <>
+        <div className="row mx-auto">
         
         <div class="row">
 
-            
- 
- 
                 {offers.map((offer, index) => (
  
                     <div className="offer-box col-4" key={index}>
@@ -91,6 +89,7 @@ export default function Offers() {
  
                 ))
                 }
+            </div>
             </div>
           
             

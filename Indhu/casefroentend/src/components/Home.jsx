@@ -1,7 +1,7 @@
 // Home.js
 import React, { useState, useEffect } from "react";
 import { toast } from 'react-toastify';
-import { useNavigate} from "react-router-dom";
+import { NavLink, useNavigate} from "react-router-dom";
 import axios from "axios";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -11,7 +11,7 @@ import "./CSS/Table.css";
 
 
 const Home = () => {
-    const [userData, setUserData] = useState(null);
+    // const [userData, setUserData] = useState(null);
     const [tableData, setTableData] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [searchResults, setSearchResults] = useState([]);
@@ -20,11 +20,11 @@ const Home = () => {
     
 const token = localStorage.getItem("token")
  
-    useEffect(() => {
-        if (!token) {
-            navigate("/login")
-        }
-    }, [])
+    // useEffect(() => {
+    //     if (!token) {
+    //         navigate("/login")
+    //     }
+    // }, [])
     
     useEffect(() => {
         const fetchData = async () => {
@@ -32,6 +32,7 @@ const token = localStorage.getItem("token")
                 const userId = localStorage.getItem("userId");
                 const response = await fetch(`http://localhost:3000/api/bookmark/${userId}`);
                 const data = await response.json();
+                console.log(data);
      
                 // Check if the product property exists in the response
                 if (data[0] && data[0].product) {
@@ -51,15 +52,15 @@ const token = localStorage.getItem("token")
 
     useEffect(() => {
         // Fetch user data
-        axios.get("http://localhost:3000/api/myprofile", {
-            headers: {
-                'x-token': token
-            }
-        })
-        .then(res => setUserData(res.data))
+        // axios.get("http://localhost:3000/api/myprofile", {
+        //     headers: {
+        //         'x-token': token
+        //     }
+        // })
+        // .then(res => setUserData(res.data))
         
-        .catch(err => console.log(err));
-        console.log(token);
+        // .catch(err => console.log(err));
+        // console.log(token);
 
 
 
@@ -122,14 +123,14 @@ const token = localStorage.getItem("token")
  
    
     return (
-        <div>
-            
+        <div className="row mx-auto ">
+{/*             
             {userData && (
                 <center>
                     <h2>Welcome  {userData.name}</h2>
                 </center>
-            )}
-            <div className="search-container d-flex justify-content-between ">
+            )} */}
+            <div className="search-container d-flex justify-content-between "style={{ marginTop: '20px' }}>
                 <div>
                     <input
                         type="text"
@@ -178,7 +179,7 @@ const token = localStorage.getItem("token")
                                                         )}
                                                     </td>
                                 
-                                <td> <button className='w-pbutton' onClick={() => { handleremoveproduct(product._id) }}>Delete</button></td>
+                                <td> <NavLink className='w-pbuton' onClick={() => { handleremoveproduct(product._id) }}><i className="bi bi-trash3"></i></NavLink></td>
                                 
                             </tr>
                         ))}
