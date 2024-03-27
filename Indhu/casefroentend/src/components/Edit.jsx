@@ -46,7 +46,7 @@ const ProfileEdit = () => {
     };
  
     return (
-        <div className='border border dark rounded container-fluid w-50 shadow-lg p-3 mb-5 bg-white rounded'>
+        <div className='border border dark rounded container-fluid w-50 shadow-lg p-3 mb-5 mt-5 bg-white rounded'>
             <h3 className="text-center mb-4">Edit Profile</h3>
             <form>
                 <div className="form-group">
@@ -66,7 +66,7 @@ const ProfileEdit = () => {
                         <option>Female</option>
                         <option>Other</option>
                     </select>
-                </div>
+                </div><br/>
  
                 <div className="text-center d-flex flex-row-reverse">
                     <button type="submit" onClick={handleUpdate} className="btn btn-primary">Update</button>

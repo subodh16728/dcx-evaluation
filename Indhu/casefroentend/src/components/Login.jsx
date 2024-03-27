@@ -69,7 +69,7 @@ export default function Login(){
                 <button type="submit" className="btn btn-success w-100 rounded-0">Login</button>
                 <p>New User Please Create Account</p>
 
-                <NavLink to="/login" className="btn btn-default border w-100 bg-light rounded-0 text-decoration-none">Register</NavLink>
+                <NavLink to="/" className="btn btn-default border w-100 bg-light rounded-0 text-decoration-none">Register</NavLink>
             </form>
 
         </div>

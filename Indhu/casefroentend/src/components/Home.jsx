@@ -7,9 +7,6 @@ import axios from "axios";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./CSS/Table.css";
 
-
-
-
 const Home = () => {
     // const [userData, setUserData] = useState(null);
     const [tableData, setTableData] = useState([]);
@@ -51,18 +48,6 @@ const token = localStorage.getItem("token")
     
 
     useEffect(() => {
-        // Fetch user data
-        // axios.get("http://localhost:3000/api/myprofile", {
-        //     headers: {
-        //         'x-token': token
-        //     }
-        // })
-        // .then(res => setUserData(res.data))
-        
-        // .catch(err => console.log(err));
-        // console.log(token);
-
-
 
         // Fetch table data
         axios.get("http://localhost:3000/api/table", {
@@ -85,7 +70,7 @@ const token = localStorage.getItem("token")
     const handleSearch = (e) => {
         setSearchTerm(e.target.value);
         const results = tableData.filter(product =>
-            product.pname.toLowerCase().includes(e.target.value.toLowerCase())
+            product.name.toLowerCase().includes(e.target.value.toLowerCase())
         );
         setSearchResults(results);
     };
@@ -123,21 +108,16 @@ const token = localStorage.getItem("token")
  
    
     return (
-        <div className="row mx-auto ">
-{/*             
-            {userData && (
-                <center>
-                    <h2>Welcome  {userData.name}</h2>
-                </center>
-            )} */}
-            <div className="search-container d-flex justify-content-between "style={{ marginTop: '20px' }}>
-                <div>
+        <div className="row mx-auto  ">
+
+            <div className="search-container d-flex justify-content-between  "style={{ marginTop: '20px'}}>
+                <div className="search">
                     <input
                         type="text"
                         placeholder="Search by product name..."
                         value={searchTerm}
                         onChange={handleSearch}
-                    />
+                    /> <i class="bi bi-search"></i>
                 </div>
                 
             </div>
@@ -145,9 +125,11 @@ const token = localStorage.getItem("token")
                 <table className="product-table">
                     <thead>
                         <tr>
-                            <th>Product Name</th>
-                            <th>Product Description</th>
-                            <th>Product Price</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Price</th>
+                            <th>Category</th>
+                            
                             <th>Wishlist</th>
                             <th>Delete</th>
                         </tr>
@@ -155,9 +137,15 @@ const token = localStorage.getItem("token")
                     <tbody>
                         {searchResults.map((product, index) => (
                             <tr key={index}>
-                                <td>{product.pname}</td>
-                                <td>{product.pdescription}</td>
-                                <td>{product.pprice}</td>
+                                {/* <td>{product.name}</td> */}
+                                <td>
+                        <NavLink to={`/productDetails/${product._id}`}>
+                          {product.name}
+                        </NavLink>
+                      </td>
+                                <td>{product.description}</td>
+                                <td>{product.price}</td>
+                                <td>{product.category}</td>
                                 <td>
                                                         
                                                            
@@ -179,13 +167,21 @@ const token = localStorage.getItem("token")
                                                         )}
                                                     </td>
                                 
-                                <td> <NavLink className='w-pbuton' onClick={() => { handleremoveproduct(product._id) }}><i className="bi bi-trash3"></i></NavLink></td>
+                                <td> <NavLink className='w-pbuton' onClick={() => { handleremoveproduct(product._id) }}><i className="bi bi-trash3"></i></NavLink>
+                                <NavLink
+                                                className='text-dark'
+                                                to={`/update/${product._id}`}
+                                            >
+                                                <i className="bi bi-pencil-square ms-3"></i>
+                                            </NavLink>
+                                </td>
                                 
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </center>
+            
         </div>
     );
 };

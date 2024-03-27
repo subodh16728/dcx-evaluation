@@ -36,3 +36,11 @@
     transform: rotate(360deg);
   }
 }
+.scrollable-form-container {
+  max-height: 80vh;
+  overflow-y: auto;
+}
+ 
+.scrollable-form-container::-webkit-scrollbar {
+  width: 0 !important;
+}

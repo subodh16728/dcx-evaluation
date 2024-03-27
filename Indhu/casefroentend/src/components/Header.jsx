@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from 'react-redux'
 
-export default function Header() {
+export default function HeaderBar() {
     const token = localStorage.getItem("token")
     const data = useSelector((state) => state.api.data);
     console.log(data);
@@ -33,11 +33,36 @@ export default function Header() {
                     <img src="./mobile.jpg" alt="The Cupcake Maker Logo" />
                     The Mobile Products
                 </div>
+                <div className="welcomeMessage">
                 {data && (
-                    <div className="welcomeMessage"><h4>Welcome {data.name}</h4></div>
-                )}
-                <button onClick={handleLogOut} className="nav-link">  Logout</button>
-                <NavLink className="nav-link" to="/wishlist"><i class="bi bi-heart"></i></NavLink>
+                    <div class="dropdown">
+                    <button
+                  class="btn btn-outline-dark dropdown-toggle"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <b>
+                    <span className="text-white">Welcome {data.name}!</span>
+                  </b>
+                </button>
+                <ul class="dropDownItemmenu dropdown-menu">
+                  <li>
+                    <a class="dropDownItem dropdown-item" href="#" onClick={handleLogOut}>
+                      Logout <i class="bi bi-box-arrow-right"></i>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropDownItem dropdown-item" href="/myprofile">
+                    <i class="bi bi-person"></i>  User Profile
+                    </a>
+                  </li>
+                </ul>
+                </div>
+         
+                )}</div>
+               
+                
             </header>
         </div>
     )

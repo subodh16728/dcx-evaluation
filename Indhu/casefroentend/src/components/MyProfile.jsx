@@ -52,7 +52,7 @@ function Userprofile() {
         <>
        
             <section>
-                <div class="container shadow-lg p-3 mb-5 bg-white rounded p-5">
+                <div class="container shadow-lg p-3 mb-5 mt-5 bg-white rounded p-5">
                     <div className="row">
                         <div className="col-md-12">
                             <div className="row">
@@ -63,7 +63,7 @@ function Userprofile() {
                                                 <i className="glyphicon glyphicon-file"></i> Welcome {data1.name}
                                             </div>
                                             <div className="col xs={6} sm={6} md={6} lg={6} d-flex flex-row-reverse">
-                                                <NavLink to={`/edit/${data1._id}`}><button type="button" className="btn btn-primary shadow-lg"><i className="bi bi-pencil-square"></i> Edit</button></NavLink>                                            </div>
+                                                <NavLink to={`/edit/${data1._id}`}><button type="button" className="btn btn-primary shadow-lg"><i className="bi bi-pencil-square"></i> Edit</button></NavLink>  </div>
                                         </div>
                                     </h1>
                                 </div>

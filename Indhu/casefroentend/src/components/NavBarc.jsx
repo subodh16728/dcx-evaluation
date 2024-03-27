@@ -1,23 +1,23 @@
-import { NavLink,useLocation ,useNavigate} from "react-router-dom";
-import React,{useEffect} from "react";
+// NavBarc.js
+import React, { useEffect } from "react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
-export default function Nav() {
-
+export default function NavBarc() {
   const navigate = useNavigate();
-  let token = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
+  const location = useLocation();
 
-    useEffect(() => {
-        if (!token) {
-            navigate("/login")
-        }
-    }, [])
-
-  const location=useLocation();
-
-  const hiddenPaths = [ '/', '/login'];
-    if (hiddenPaths.includes(location.pathname)) {
-        return null;
+  useEffect(() => {
+    if (!token) {
+      navigate("/login");
     }
+  }, []);
+
+  const hiddenPaths = ['/', '/login'];
+  if (hiddenPaths.includes(location.pathname)) {
+    return null;
+  }
+
   return (
     <nav className="navbar navbar-expand-lg" style={{ backgroundColor: '#E34C77' }}>
       <div className="container-fluid">
@@ -46,10 +46,15 @@ export default function Nav() {
             <li className="nav-item">
               <NavLink className="nav-link text-white" to="/offers">My Offers</NavLink>
             </li>
+          </ul>
+          <ul className="navbar-nav mb-2 mb-lg-0">
             <li className="nav-item">
-              <NavLink className="nav-link text-white" to="/myprofile">My Profile</NavLink>
+              
+              <NavLink className="nav-link text-white" to="/wishlist"> <i class="bi bi-heart"></i> Wishlist </NavLink>
             </li>
           </ul>
+
+          
         </div>
       </div>
     </nav>
