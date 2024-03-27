@@ -31,7 +31,7 @@ const Dashboard = () => {
         return () => {
             debouncedSearch.cancel();
         }
-    }, [])
+    })
 
     useEffect(() => {
         dispatch(fetchProducts(search));
@@ -85,21 +85,22 @@ const Dashboard = () => {
                             <Button variant="secondary"><NavLink className="nav-link active" to="/products/add">Add Product</NavLink></Button>
                         </InputGroup>
                     </Form>
-                    {data && data.length > 0 ? (
-                        <table id='sort-table' className="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Title</th>
-                                    <th scope="col">Description</th>
-                                    <th scope="col">Category</th>
-                                    <th scope="col">Price</th>
-                                    <th scope="col">Actions</th>
-                                </tr>
-                            </thead>
+
+                    <table id='sort-table' className="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">Title</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        {data && data.length > 0 ? (
                             <tbody>
                                 {data.map((item, index) => (
                                     <tr key={index}>
-                                        <td>{item.title}</td>
+                                        <td>{item.name}</td>
                                         <td>{item.description}</td>
                                         <td>{item.category}</td>
                                         <td>{item.price}</td>
@@ -121,10 +122,13 @@ const Dashboard = () => {
                                     </tr>
                                 ))}
                             </tbody>
-                        </table>
-                    ) : (
-                        <h1 className='text-center'>No results</h1>
-                    )}
+                        ) : (
+                            <tbody>
+                                <tr>
+                                    <td colSpan={5} className='text-center'>No Results</td>
+                                </tr>
+                            </tbody>
+                        )}</table>
                 </Container>
             </div>
             <Outlet />

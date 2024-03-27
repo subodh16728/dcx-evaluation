@@ -5,24 +5,30 @@ import Cookie from "js-cookie"
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Features from './Features';
 
 const Products = () => {
 
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
-    const [isModified, setIsModified] = useState(false);
+    const [feature] = useState(
+        {
+            title: "",
+            value: ""
+        }
+    )
+
     const [data, setData] = useState({
-        title: "",
+        name: "",
         category: "",
         price: "",
-        description: ""
+        description: "",
+        features: []
     });
 
     const params = useParams()
     const id = params.id;
-
-    // authentication using jwt token
     const token = Cookie.get("token")
     useEffect(() => {
         if (!token) {
@@ -34,21 +40,43 @@ const Products = () => {
     }, [])
 
     const productSchema = Joi.object({
-        title: Joi.string().required(),
+        name: Joi.string().required(),
         category: Joi.string().required(),
         price: Joi.number().required(),
         description: Joi.string().required(),
+        features: Joi.array().required(),
+        createdAt: Joi.any().strip(),
         updatedAt: Joi.any().strip()
     });
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setData(prevData => ({
-            ...prevData,
-            [name]: value
-        }));
-        setIsModified(true);
+    const AddFeature = () => {
+        setData({
+            ...data,
+            features: [...data.features, feature]
+        })
+    }
+
+    const handleChangeFeatures = (index, name, value) => {
+        const updatedFeatures = [...data.features];
+        updatedFeatures[index][name] = value;
+        setData({ ...data, features: updatedFeatures });
     };
+
+    const handleDeleteFeatures = (index) => {
+        const updatedFeatures = [...data.features];
+        updatedFeatures.splice(index, 1);
+        setData({ ...data, features: updatedFeatures });
+    };
+
+    const handleCancel = () => {
+        navigate("/dashboard")
+    }
+
+    const handleChange = (e) => {
+        let newData = { ...data };
+        newData[e.target.name] = e.target.value;
+        setData(newData);
+    }
 
     const handleProducts = async () => {
         try {
@@ -78,6 +106,7 @@ const Products = () => {
                 valErr[err.path[0]] = err.message;
             });
             setErrors(valErr);
+            console.log(valErr)
             return;
         }
 
@@ -107,16 +136,31 @@ const Products = () => {
 
     return (
         <>
-            <div className="container mt-5 w-50">
-                <form className='w-50 mx-auto p-4 shadow-lg border' onSubmit={handleSubmit}>
-                    <div className="mb-3">
-                        <label htmlFor="title" className="form-label">Title</label>
-                        <input type="text" className="form-control" id="title" name="title" value={data.title} onChange={handleChange} />
-                        <small className="text-danger">{errors.title}</small>
+            <div className="container mt-2 mb-3 w-100">
+                <form className='w-50 mx-auto p-4 shadow-lg' onSubmit={handleSubmit}>
+                    <div className='d-flex justify-content-between'>
+                        <h2 className=''>Product details</h2>
+                        <div className='w-50 d-flex justify-content-end'>
+                            <button type="submit" className="cancel-btn" onClick={handleCancel}>Cancel</button>
+                            <button type="submit" className="product-btn">{loading ? 'Loading...' : (id ? 'Update Product' : 'Add Product')}</button>
+                        </div>
                     </div>
+
+                    <hr />
                     <div className="mb-3">
+                        <label htmlFor="name" className="form-label">Name</label>
+                        <input type="text" className="form-control" id="name" name="name" value={data.name} onChange={handleChange} />
+                        <small className="text-danger">{errors.name}</small>
+                    </div>
+                    <div className="mb-3 w-full">
                         <label htmlFor="category" className="form-label">Category</label>
-                        <input type="text" className="form-control" id="category" name="category" value={data.category} onChange={handleChange} />
+                        <select className='form-control' name="category" id="category" value={data.category} onChange={handleChange}>
+                            <option value="">Select Category For Product</option>
+                            <option value="men's clothing">Men's Clothing</option>
+                            <option value="jewelery">Jewelery</option>
+                            <option value="electronics">Electronics</option>
+                            <option value="women's clothing">Women's Clothing</option>
+                        </select>
                         <small className="text-danger">{errors.category}</small>
                     </div>
                     <div className="mb-3">
@@ -130,7 +174,16 @@ const Products = () => {
                         <small className="text-danger">{errors.description}</small>
                     </div>
 
-                    <button type="submit" className="btn btn-primary w-100" disabled={loading || (id && !isModified)}>{loading ? 'Loading...' : (id ? 'Update Product' : 'Add Product')}</button>
+
+
+                    <div className='w-75 ms-auto'>
+                        <button type="button" className="w-25 btn btn-outline-secondary ms-auto d-block feature-btn" onClick={AddFeature}>Add feature</button>
+                    </div>
+                    {
+                        data.features.map((dataItem, index) => {
+                            return <Features key={index} index={index} data={dataItem} onChange={handleChangeFeatures} onDelete={handleDeleteFeatures} />
+                        })
+                    }
 
                 </form>
             </div>

@@ -3,7 +3,7 @@ const User = require("../models/userModel")
 const nodemailer = require('nodemailer');
 const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
-const { verifyUser } = require("./bookmarksController")
+const { verifyUser } = require("./userController")
 dotenv.config()
 
 // get all offers

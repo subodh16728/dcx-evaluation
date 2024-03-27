@@ -1,32 +1,12 @@
 const Bookmarks = require("../models/bookmarksModel");
-const jwt = require("jsonwebtoken")
-
-exports.verifyUser = (req, res, next) => {
-    const tokenHeader = req.headers.authorization;
-    if (!tokenHeader) {
-        res.status(401).json({
-            message: "Token is missing"
-        })
-    } else {
-        try {
-            const token = tokenHeader.split(" ")[1]
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            next();
-        } catch (error) {
-            res.status(403).json({
-                message: "Token Invalid"
-            })
-
-        }
-    }
-
-}
+const dotenv = require("dotenv");
+dotenv.config()
+const { verifyUser } = require("./userController")
 
 // get all bookmarks
 exports.getBookmarks = async (req, res) => {
     verifyUser(req, res, async () => {
         const userID = req.query.userID;
-
         try {
             const response = await Bookmarks.findOne({ userID: userID })
             res.status(200).json(response)
@@ -37,7 +17,6 @@ exports.getBookmarks = async (req, res) => {
 }
 
 // adding to bookmarks
-
 exports.addBookmarks = async (req, res) => {
     verifyUser(req, res, async () => {
         try {
