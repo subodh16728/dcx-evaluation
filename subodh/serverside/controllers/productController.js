@@ -1,6 +1,6 @@
 const Products = require("../models/productModel");
 const dotenv = require("dotenv");
-const { verifyUser } = require("./bookmarksController")
+const { verifyUser } = require("./userController")
 dotenv.config()
 
 // Get all products

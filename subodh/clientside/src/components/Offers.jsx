@@ -2,32 +2,28 @@ import React, { useEffect, useState } from 'react';
 import { Card, Button, Row, Col } from 'react-bootstrap';
 import axios from "axios";
 import Cookie from "js-cookie"
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Offers = () => {
 
-    // authentication using jwt token
-    const navigate = useNavigate();
+    const [data, setData] = useState([]);
     const token = Cookie.get("token")
     useEffect(() => {
-        if (!token) {
-            navigate("/login")
-        }
         getOffers();
     }, [])
-    const [data, setData] = useState([]);
 
+    // display all the offers
     const getOffers = async () => {
         try {
             const response = await axios.get("http://localhost:5000/api/offers", { headers: { Authorization: `Bearer ${token}` } })
             setData(response.data)
         } catch (error) {
-            console.error(`Error fetching offers: ${error}`)
+            toast.error("Cannot fetch offers. Try again")
         }
     }
 
+    // get particular offer and send
     const handleOffer = async (offerID) => {
         try {
             const response = await axios.get(`http://localhost:5000/api/offers/${offerID}`, {
@@ -38,7 +34,7 @@ const Offers = () => {
             const message = response.data.message
             toast.success(`${message}`)
         } catch (error) {
-            console.error("Error fetching data: ", error);
+            toast.error("Please try again")
         }
     }
 

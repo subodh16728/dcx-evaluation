@@ -2,6 +2,28 @@ const User = require("../models/userModel")
 const bcryptjs = require('bcryptjs');
 const jwt = require("jsonwebtoken");
 
+// Verify the user
+const verifyUser = (req, res, next) => {
+    const tokenHeader = req.headers.authorization;
+    if (!tokenHeader) {
+        res.status(401).json({
+            message: "Token is missing"
+        })
+    } else {
+        try {
+            const token = tokenHeader.split(" ")[1]
+            jwt.verify(token, process.env.JWT_SECRET);
+            next();
+        } catch (error) {
+            res.status(403).json({
+                message: "Token Invalid"
+            })
+
+        }
+    }
+
+}
+
 // User creating an account
 const userSignUp = async (req, res) => {
 
@@ -133,4 +155,4 @@ const getUserByID = (req, res) => {
         })
 }
 
-module.exports = { userSignUp, userSignin, getUserByID };
+module.exports = { userSignUp, userSignin, getUserByID, verifyUser };
