@@ -52,22 +52,21 @@ const Bookmarks = () => {
 
             <div className="container mt-5">
                 <Container>
-                    {
-                        productdata && productdata.length > 0 ? (
-                            <table id='sort-table' class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Title</th>
-                                        <th scope="col">Description</th>
-                                        <th scope="col">Category</th>
-                                        <th scope="col">Price</th>
-                                        <th scope="col">Bookmarks</th>
-                                    </tr>
-                                </thead>
+
+                    <table id='sort-table' class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">Title</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Bookmarks</th>
+                            </tr>
+                        </thead>
+                        {
+                            productdata && productdata.length > 0 ? (
                                 <tbody>
-
                                     {
-
                                         productdata && productdata.map((item, index) => (
 
                                             <tr key={index}>
@@ -91,24 +90,15 @@ const Bookmarks = () => {
                                     }
 
                                 </tbody>
-                            </table>) : (
-                            <table id='sort-table' className="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Title</th>
-                                        <th scope="col">Description</th>
-                                        <th scope="col">Category</th>
-                                        <th scope="col">Price</th>
-                                        <th scope="col">Actions</th>
-                                    </tr>
-                                </thead>
+                            ) : (
                                 <tbody>
                                     <tr>
                                         <td colSpan={5} className='text-center'>No Bookmarks</td>
                                     </tr>
                                 </tbody>
-                            </table>
-                        )}
+                            )
+                        }
+                    </table>
                 </Container>
             </div>
 

@@ -85,17 +85,18 @@ const Dashboard = () => {
                             <Button variant="secondary"><NavLink className="nav-link active" to="/products/add">Add Product</NavLink></Button>
                         </InputGroup>
                     </Form>
-                    {data && data.length > 0 ? (
-                        <table id='sort-table' className="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Title</th>
-                                    <th scope="col">Description</th>
-                                    <th scope="col">Category</th>
-                                    <th scope="col">Price</th>
-                                    <th scope="col">Actions</th>
-                                </tr>
-                            </thead>
+
+                    <table id='sort-table' className="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">Title</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        {data && data.length > 0 ? (
                             <tbody>
                                 {data.map((item, index) => (
                                     <tr key={index}>
@@ -121,25 +122,13 @@ const Dashboard = () => {
                                     </tr>
                                 ))}
                             </tbody>
-                        </table>
-                    ) : (
-                        <table id='sort-table' className="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Title</th>
-                                    <th scope="col">Description</th>
-                                    <th scope="col">Category</th>
-                                    <th scope="col">Price</th>
-                                    <th scope="col">Actions</th>
-                                </tr>
-                            </thead>
+                        ) : (
                             <tbody>
                                 <tr>
                                     <td colSpan={5} className='text-center'>No Results</td>
                                 </tr>
                             </tbody>
-                        </table>
-                    )}
+                        )}</table>
                 </Container>
             </div>
             <Outlet />
