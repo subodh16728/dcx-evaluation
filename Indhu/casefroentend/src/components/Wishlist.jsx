@@ -25,9 +25,9 @@ const Wishlist = () => {
     useEffect(() => {                                 
         const fetchWishlistItems = async () => {
             try {
-                
-                
+               
                 const response = await axios.get(`http://localhost:3000/api/bookmark/${userId}`);
+                console.log(response.data)
                 setWishlistItems(response.data);
             } catch (error) {
                 console.error('Error fetching wishlist items:', error);
@@ -50,15 +50,16 @@ const Wishlist = () => {
             try {
 
                 const response = await axios.get(`http://localhost:3000/api/table/${productId}`);
-                const { pname, pdescription, pprice } = response.data;
+                const { name, description, price,category } = response.data;
 
                 // Update product details state
                 setProductDetails(prevDetails => ({
                     ...prevDetails,
                     [productId]: {
-                        pname,
-                        pdescription,
-                        pprice
+                        name,
+                        description,
+                        price,
+                        category
                     }
                 }));
             } catch (error) {
@@ -100,9 +101,10 @@ const Wishlist = () => {
         }
     };
     return (
-        <div>
+        <div className="row mx-auto" >
            
             <h1>Wishlist Items</h1>
+            
             <table className='product-table'>
                 <thead>
                     <tr>
@@ -110,26 +112,30 @@ const Wishlist = () => {
                         <th>Name</th>
                         <th>Description</th>
                         <th>Price</th>
+                        <th>Category</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {wishlistItems.map(wishlistItem => (
+                    {wishlistItems.length>0 ?
+                    (wishlistItems.map(wishlistItem => (
                         <React.Fragment key={wishlistItem._id}>
                             {wishlistItem.product.map(productId => (
                                 <tr key={productId}>
                                     
                                     {productDetails[productId] && (
                                         <React.Fragment>
-                                            <td>{productDetails[productId].pname}</td>
-                                            <td>{productDetails[productId].pdescription}</td>
-                                            <td>{productDetails[productId].pprice}</td>
+                                            
+                                            <td>{productDetails[productId].name}</td>
+                                            <td>{productDetails[productId].description}</td>
+                                            <td>{productDetails[productId].price}</td>
+                                            <td>{productDetails[productId].category}</td>
                                            <td> <button className='w-pbutton' onClick={() => { removeProductFromWishlist(productId) }}><i class="bi bi-trash"></i></button></td>
                                         </React.Fragment>
                                     )}
                                 </tr>
                             ))}
                         </React.Fragment>
-                    ))}
+                    ))):<h1>Cart is empty</h1>}
                 </tbody>
             </table>
         </div>

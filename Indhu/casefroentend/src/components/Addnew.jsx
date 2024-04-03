@@ -1,128 +1,152 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-
+import FeatureForm from "./Feature";
 
 export default function ProductForm() {
     const navigate = useNavigate();
-    const token = localStorage.getItem("token")
- 
+    const { id } = useParams();
+    const token = localStorage.getItem("token");
+    const [data, setData] = useState({
+        name: "",
+        description: "",
+        price: "",
+        category: '',
+        features: []
+    });
+    const [features, setFeatures] = useState([]);
+
     useEffect(() => {
         if (!token) {
             navigate("/login")
+        } else if (id !== undefined) {
+            handleProduct();
         }
-    }, [])
-    const [data, setData] = useState({
-        pname: "",
-        pdescription: "",
-        pprice: "",
-    });
+    }, []);
 
-    const [errors, setErrors] = useState({
-        pname: "",
-        pdescription: "",
-        pprice: "",
-    });
+    const handleProduct = async () => {
+        try {
+            const response = await axios.get(`http://localhost:3000/api/table/${id}`);
+            const productData = response.data;
+            setData(productData);
+            setFeatures(productData.features || []); // Set features if they exist
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     const changeHandler = e => {
         setData({ ...data, [e.target.name]: e.target.value });
-        setErrors({ ...errors, [e.target.name]: "" }); 
     };
 
-    const submitHandler = async(e) => {
-        e.preventDefault();
-        let formIsValid = true;
-        const newErrors = { ...errors };
+    const addFeature = () => {
+        setFeatures([...features, { title: '', value: '' }]);
+    };
 
-        // Validate product name
-        if (data.pname === "") {
-            newErrors.pname = "Product name is required";
-            formIsValid = false;
-        }
+    const handleFeatureChange = (index, field, value) => {
+        const updatedFeatures = [...features];
+        updatedFeatures[index][field] = value;
+        setFeatures(updatedFeatures);
+    };
 
-        // Validate product description
-        if (data.pdescription === "") {
-            newErrors.pdescription = "Product description is required";
-            formIsValid = false;
-        }
+    const removeFeature = index => {
+        const updatedFeatures = [...features];
+        updatedFeatures.splice(index, 1);
+        setFeatures(updatedFeatures);
+    };
 
-        // Validate product price
-        if (data.pprice === "" ) {
-            newErrors.pprice = "Product price is required";
-            formIsValid = false;
-        }
-        else if(data.pprice<=0){
-            newErrors.pprice = "Product price should be greater than 0";
-            formIsValid = false;
-
-        }
-
-        setErrors(newErrors);
-
-        if (formIsValid) {
-            try {
-                const res = await axios.post("http://localhost:3000/api/table", data);
-                toast.success(res.data);
+    const submitHandler = async (e) => {
+    e.preventDefault();
+    try {
+        const requestData = {
+            ...data,
+            features: features // Include updated features in the request
+        };
+        if (id) {
+            const response = await axios.put(`http://localhost:3000/api/table/update/${id}`, requestData);
+            if (response.status === 200) {
+                toast.success("Product updated successfully");
+                navigate("/home");
+            } else {
+                toast.error("Failed to update product");
+            }
+        } else {
+            const response = await axios.post("http://localhost:3000/api/table/add", requestData);
+            if (response.status === 201) {
+                toast.success("Product created successfully");
                 navigate('/home');
-            } catch (err) {
-                console.error(err);
-                console.log(err.response?.data); 
-                
-                const errormessage=err.response?.data;
-                
-                if (errormessage==="Product already exists") {
-                    toast.error("Product already exists");
-                } else {
-                    console.error("Error:",err);
-                    toast.error("An error occurred. Please try again later.");
-                }
+            } else {
+                toast.error("Failed to create product");
             }
         }
-        
-        
-    };
+    } catch (err) {
+        console.error(err);
+        console.log(err.response?.data);
+
+        const errormessage = err.response?.data;
+
+        if (errormessage === "Product already exists") {
+            toast.error("Product already exists");
+        } else {
+            console.error("Error:", err);
+            toast.error("An error occurred. Please try again later.");
+        }
+    }
+};
+
 
     return (
-        <div> 
-     
-    
-        <div className="d-flex justify-content-center align-items-center vh-100">
-           
-            <div className="bg-white p-3 rounded w-25">
-                <h2>Add New Products</h2>
+        <div className="vh-100 d-flex justify-content-center align-items-center">
+            <div className="bg-white p-3 rounded w-50 scrollable-form-container">
                 <form onSubmit={submitHandler}>
-                    <div className="mb-3">
-                        <label htmlFor="pname">
-                            <strong>Product Name</strong>
-                        </label>
-                        <input type="text" placeholder="Enter Product Name" id="pname" autoComplete="off" name="pname" onChange={changeHandler} className="form-control rounded-0" />
-                        {errors.pname && <p className="text-danger">{errors.pname}</p>}
+                    <div style={{ textAlign: "center" }}><h4>{id ? "Update Product" : "Add Product"}</h4></div>
+                    <div className="row container-fluid d-flex flex-row-reverse mt-3">
+                        <button type="submit" className="btn btn-success rounded-0" style={{ width: "15%" }}>{(id ? 'Update Product' : 'Add Product')}</button>
+                        <button type="button" className="btn btn-secondary me-2" onClick={() => navigate("/home")} style={{ width: "15%" }}>Cancel</button>
                     </div>
-                    <div className="mb-3">
-                        <label htmlFor="pdescription">
-                            <strong>Product Description</strong>
-                        </label>
-                        <input type="text" placeholder="Enter product description" id="pdescription" autoComplete="off" name="pdescription" onChange={changeHandler} className="form-control rounded-0" />
-                        {errors.pdescription && <p className="text-danger">{errors.pdescription}</p>}
+                    <div>
+                        <div className="row mb-3">
+                            <div className="col">
+                                <label htmlFor="name"><strong>Product Name</strong></label>
+                                <input type="text" placeholder="Enter Product Name" id="name" autoComplete="off" name="name" value={data.name} onChange={changeHandler} required className="form-control rounded-0" />
+                            </div>
+                            <div className="col">
+                                <label htmlFor="description"><strong>Product Description</strong></label>
+                                <textarea type="text" required placeholder="Enter product description" id="description" autoComplete="off" value={data.description} name="description" onChange={changeHandler} className="form-control rounded-0" />
+                            </div>
+                        </div>
+                        <div className="row mb-3">
+                            <div className="col">
+                                <label htmlFor="price"><strong>Product Price</strong></label>
+                                <input type="Number" min="0" placeholder="Enter Price" required id="price" autoComplete="off" value={data.price} name="price" onChange={changeHandler} className="form-control rounded-0" />
+                            </div>
+                            <div className="col">
+                                <label htmlFor="category"><strong>Category</strong></label>
+                                <select id="category" name="category" value={data.category} onChange={changeHandler} required className="form-control rounded-0">
+                                    <option value="">Select a category</option>
+                                    <option value="men's clothing">Men's Clothing</option>
+                                    <option value="jewelery">Jewelery</option>
+                                    <option value="electronics">Electronics</option>
+                                    <option value="women's clothing">Women's Clothing</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="button" className="btn btn-primary" required onClick={addFeature}>Add Feature</button><br /><br />
+                        {features.map((feature, index) => (
+                            <FeatureForm
+                                key={index}
+                                index={index}
+                                title={feature.title}
+                                value={feature.value}
+                                onChange={(field, value) => handleFeatureChange(index, field, value)}
+                                removeFeature={() => removeFeature(index)}
+                            />
+                        ))}
                     </div>
-                    <div className="mb-3">
-                        <label htmlFor="pprice">
-                            <strong>Product Price</strong>
-                        </label>
-                        <input type="text" placeholder="Enter Price" id="pprice" autoComplete="off" name="pprice" onChange={changeHandler} className="form-control rounded-0" />
-                        {errors.pprice && <p className="text-danger">{errors.pprice}</p>}
-                    </div>
-
-                    <button type="submit" className="btn btn-success w-100 rounded-0">Add Product</button>
-
                 </form>
-
             </div>
-
-        </div>
         </div>
     );
 }
