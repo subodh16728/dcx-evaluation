@@ -33,10 +33,18 @@ const Register = async (req, res) => {
         }
         let exist = await Registeruser.findOne({ email: email })
         if (exist) {
-            return res.status(400).send('User already exists')
+            return res.status(400).json({
+                message: "User already exists",
+                error: true,
+                success: false
+            });
         }
         if (password !== confirmpassword) {
-            return res.status(400).send('Passwords not matches');
+            return res.status(400).json({
+                message: "Passwords do not match",
+                error: true,
+                success: false
+            });
         }
         
         
@@ -97,5 +105,65 @@ const Dashboard = async (req, res) => {
     }
 }
 
+const getAllUsers = async (req, res) => {
+    try {
+        // Retrieve all users from the database
+        const users = await Registeruser.find();
 
-module.exports = { login, Register, Dashboard }
+        // Return the array of users
+        res.json(users);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send('Server error');
+    }
+};
+
+const updateUserProfile = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { username, email } = req.body;
+
+        // Find the user by ID
+        let user = await Registeruser.findById(userId);
+
+        // Update user data
+        if (user) {
+            // Prevent updating the email
+            if (email && email !== user.email) {
+                return res.status(400).json({ message: 'Email cannot be changed' });
+            }
+            
+            user.username = username || user.username;
+            await user.save();
+            return res.status(200).json({ message: 'Profile updated successfully' });
+        } else {
+            return res.status(404).json({ message: 'User not found' });
+        }
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send('Server error');
+    }
+};
+
+const getAllUsersById = async (req, res) => {
+    try {
+        const userId = req.params.id; // Retrieve the user ID from the URL parameters
+
+        // Find the user by ID
+        const user = await Registeruser.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Return the user details
+        res.json(user);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send('Server error');
+    }
+};
+
+
+
+module.exports = { login, Register, Dashboard, getAllUsers, updateUserProfile, getAllUsersById }
