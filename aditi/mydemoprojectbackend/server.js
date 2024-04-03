@@ -4,6 +4,8 @@ const dotenv = require("dotenv");
 const connectDB = require("./DataBase/database");
 const userRouter = require("./Routers/userRouter");
 const productRouter = require("./Routers/productRouter");
+const emailRoutes = require('./Routers/emailRouter');
+const offerRouter = require("./Routers/offerRouter");
 
 dotenv.config();
 const app = express();
@@ -20,6 +22,9 @@ app.get("/", (req, res) => {
 });
 app.use("/api/users", userRouter);
 app.use("/api/product", productRouter);
+app.use("/api/email",emailRoutes);
+app.use('/api/offer', offerRouter);
+
 
 connectDB();
 

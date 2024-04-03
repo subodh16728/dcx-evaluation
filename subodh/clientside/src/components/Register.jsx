@@ -1,13 +1,26 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import Joi from "joi";
 import axios from 'axios';
+import Cookie from "js-cookie"
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { registerUser } from '../store/slice/registerUserSlice';
 
 const Register = () => {
 
     const [loading, setLoading] = useState(false);      // loading state
     const [errors, setErrors] = useState({});           // joi errors
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const token = Cookie.get("token")
+
+    useEffect(() => {
+        if (token) {
+            navigate("/dashboard")
+        }
+    }, [])
 
     // Form validation
     const registerSchema = Joi.object({
@@ -37,7 +50,6 @@ const Register = () => {
             }
         })
     }
-    console.log("data", data);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -50,28 +62,18 @@ const Register = () => {
             error.details.map((err) => {
                 valErr[err.path[0]] = err.message;
             });
-            console.log("Validation: ", valErr)
             setErrors(valErr);
-            // console.log(valErr)
             return;
         }
 
         setLoading(true);
 
-        try {
-            const response = await axios.post("http://localhost:5000/api/register", data);
-
-            if (response.status === 200) {
-                console.log("Data response is: ", response);
-                alert(response.data.message)
-                navigate("/login")
-            } else {
-                console.error(response.data.message);
-            }
-        } catch (error) {
-            console.error("Error during login operation:", error);
-            const message = error.response.data.message
-            alert(message);
+        const response = await dispatch(registerUser(data))
+        if (response.payload.success === true) {
+            toast.success(response.payload.message)
+            navigate("/login")
+        } else {
+            toast.error(response.payload.message)
         }
 
         setLoading(false);

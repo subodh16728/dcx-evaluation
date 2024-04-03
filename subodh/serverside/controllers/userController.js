@@ -2,6 +2,28 @@ const User = require("../models/userModel")
 const bcryptjs = require('bcryptjs');
 const jwt = require("jsonwebtoken");
 
+// Verify the user
+const verifyUser = (req, res, next) => {
+    const tokenHeader = req.headers.authorization;
+    if (!tokenHeader) {
+        res.status(401).json({
+            message: "Token is missing"
+        })
+    } else {
+        try {
+            const token = tokenHeader.split(" ")[1]
+            jwt.verify(token, process.env.JWT_SECRET);
+            next();
+        } catch (error) {
+            res.status(403).json({
+                message: "Token Invalid"
+            })
+
+        }
+    }
+
+}
+
 // User creating an account
 const userSignUp = async (req, res) => {
 
@@ -11,7 +33,7 @@ const userSignUp = async (req, res) => {
         const user = await User.findOne({ email: req.body.email })
 
         if (user) {
-            return res.status(400).json({
+            return res.status(200).json({
                 message: "User already exists",
                 error: true,
                 success: false
@@ -38,6 +60,7 @@ const userSignUp = async (req, res) => {
 
                 const userDetails = new User(payload)
                 const save = await userDetails.save()
+                console.log(save)
 
                 return res.status(200).json({
                     message: "Account created successfully",
@@ -100,8 +123,11 @@ const userSignin = async (req, res) => {
                 expiresIn: '7d'
             })
 
+            console.log(token)
+
             res.status(200).json({
                 token: token,
+                userID: user._id,
                 error: false,
                 success: true,
                 message: "Login successfully"
@@ -117,4 +143,16 @@ const userSignin = async (req, res) => {
     }
 }
 
-module.exports = { userSignUp, userSignin };
+// get users by id
+const getUserByID = (req, res) => {
+    const id = req.params.id;
+    User.findById(id)
+        .then((data) => {
+            res.status(200).json(data)
+        })
+        .catch((err) => {
+            res.status(400).send(err)
+        })
+}
+
+module.exports = { userSignUp, userSignin, getUserByID, verifyUser };

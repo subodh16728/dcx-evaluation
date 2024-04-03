@@ -1,0 +1,65 @@
+* {
+    box-sizing: border-box;
+    margin: 0 auto;
+    padding: 0;
+    font-family: cursive;
+}
+
+body {
+    background-color: #FFEAEA;
+}
+
+.row::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+[class*="col-"] {
+    float: left;
+    padding: 0;
+}
+
+header {
+    background: linear-gradient(to right, #6F2A3E, #4c1f36, #331524);
+    height: 120px;
+}
+
+.headerLogo {
+    width: 250px;
+    margin-top: 5px;
+    float: left;
+    font-size: 140%;
+    color: #E34C77;
+    font-family: cursive;
+    text-shadow: -0.3px 0 #888888, 0 0.3px #888888, 0.3px 0 #888888, 0 -0.3px #888888;
+}
+
+header img {
+    float: left;
+    width: 110px;
+    height: auto;
+    padding: 2px;
+    margin-left: 30px;
+    margin-right: 10px;
+}
+
+
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav li {
+    float: left;
+}
+.welcomeMessage {
+    text-align: right;
+    margin-right: auto;
+    color: white;
+    margin-right: 15px;
+    
+}
+

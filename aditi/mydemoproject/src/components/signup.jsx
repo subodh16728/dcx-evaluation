@@ -5,13 +5,14 @@ import Nav from "./navbar";
 import { signUpUser } from "../Service/userApiService";
 
 const SignUp = () => {
+
   const [user, setUser] = useState({
-    name: "",
+    username: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
-
+  
   const signUpUserInfo = async () => {
     try {
       let receivedInfo = await signUpUser(user);
@@ -45,6 +46,7 @@ const SignUp = () => {
     const { error } = schema.validate(user, {
       abortEarly: false,
     });
+    console.log("Error", error);
 
     if (error) {
       for (let item of error.details) {
@@ -60,18 +62,24 @@ const SignUp = () => {
     setUser(tempUser);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    setErrors(validate());
-    if (errors) return;
+    // Validate the form
+    const validationErrors = validate();
 
-    signUpUserInfo();
+    // Set the errors state after the validation
+    setErrors(validationErrors);
+
+    // Check if there are validation errors
+    if (validationErrors) return;
+
+    // Proceed with form submission
+    await signUpUserInfo();
   };
 
   return (
     <>
-      <Nav />
       <div
         className="row"
         style={{
@@ -156,13 +164,18 @@ const SignUp = () => {
                 </label>
                 <input
                   type="password"
+                  placeholder="Re-Enter your password"
                   className="form-control"
                   id="confirmPassword"
                   name="confirmPassword"
                   value={user.confirmPassword}
                   onChange={handleChange}
                 />
-                <small className="text-danger">{errors.confirmPassword}</small>
+                {errors && (
+                  <small className="text-danger">
+                    {errors.confirmPassword}
+                  </small>
+                )}
               </div>
               <div className="d-grid gap-2">
                 <input type="submit" className="btn btn-secondary" />

@@ -8,6 +8,8 @@
 # testing
 /coverage
 
+#evn 
+/.env
 # production
 /build
 
