@@ -1,25 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Joi from "joi";
+import Joi, { string } from "joi";
 import Cookie from "js-cookie"
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Features from './Features';
+import {ErrorContainer, Feature, HandleChangeFeature, Product} from "../utils/model";
 
 const Products = () => {
 
     const [loading, setLoading] = useState(false);
-    const [errors, setErrors] = useState({});
+    const [errors, setErrors] = useState<ErrorContainer>({});
     const navigate = useNavigate();
-    const [feature] = useState(
+    const [feature] = useState<Feature>(
         {
             title: "",
             value: ""
         }
     )
 
-    const [data, setData] = useState({
+    const [data, setData] = useState<Product>({
         name: "",
         category: "",
         price: "",
@@ -56,13 +57,17 @@ const Products = () => {
         })
     }
 
-    const handleChangeFeatures = (index, name, value) => {
+    const handleChangeFeatures = (index:number, name:string, value:string) => {
         const updatedFeatures = [...data.features];
         updatedFeatures[index][name] = value;
         setData({ ...data, features: updatedFeatures });
+        // setData((preForm) => {
+        //     ...preForm,
+            
+        // })
     };
 
-    const handleDeleteFeatures = (index) => {
+    const handleDeleteFeatures = (index: number) => {
         const updatedFeatures = [...data.features];
         updatedFeatures.splice(index, 1);
         setData({ ...data, features: updatedFeatures });
@@ -72,9 +77,10 @@ const Products = () => {
         navigate("/dashboard")
     }
 
-    const handleChange = (e) => {
+    const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         let newData = { ...data };
-        newData[e.target.name] = e.target.value;
+        let keyName: string = (event.target as HTMLInputElement).name; // features
+        newData[keyName as keyof Omit<Product, "features">] = (event.target as HTMLInputElement).value; // newData.features = event.target.value
         setData(newData);
     }
 
@@ -89,8 +95,8 @@ const Products = () => {
 
     }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
 
         if (loading) {
             return;
