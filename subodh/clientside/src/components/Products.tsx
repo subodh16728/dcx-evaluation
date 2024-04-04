@@ -6,7 +6,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Features from './Features';
-import {ErrorContainer, Feature, HandleChangeFeature, Product} from "../utils/model";
+import {ErrorContainer, Feature, Product} from "../utils/model";
 
 const Products = () => {
 
@@ -57,14 +57,10 @@ const Products = () => {
         })
     }
 
-    const handleChangeFeatures = (index:number, name:string, value:string) => {
+    const handleChangeFeatures = (index: number, name: string, value: string) => {
         const updatedFeatures = [...data.features];
         updatedFeatures[index][name] = value;
         setData({ ...data, features: updatedFeatures });
-        // setData((preForm) => {
-        //     ...preForm,
-            
-        // })
     };
 
     const handleDeleteFeatures = (index: number) => {
@@ -107,12 +103,11 @@ const Products = () => {
         const { error } = productSchema.validate(data, { abortEarly: true });
 
         if (error) {
-            const valErr = {};
+            const valErr:ErrorContainer = {};
             error.details.forEach((err) => {
                 valErr[err.path[0]] = err.message;
             });
             setErrors(valErr);
-            console.log(valErr)
             return;
         }
 

@@ -1,7 +1,8 @@
 
 export interface Feature {
     title: string;
-    value: string
+    value: string;
+    [props: string]: string;
 }
 
 export interface Product {
@@ -12,6 +13,7 @@ export interface Product {
     features: Array<Feature>; // Product.features Array<Feature> = event.taret.value (string)
 }
 
+// index signature: when how many data are going to be received are unknown
 export interface ErrorContainer {
     [props: string]: string;
 }
