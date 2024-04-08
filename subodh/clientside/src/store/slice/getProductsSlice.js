@@ -1,11 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import Cookie from "js-cookie";
+import axios from "axios";
 
 // Action
-export const fetchProducts = createAsyncThunk("fetchProducts", async () => {
-    const response = await fetch("http://localhost:5000/api/products")
-    console.log(response)
-    return response.json()
-})
+export const fetchProducts = createAsyncThunk("fetchProducts", async (search) => {
+    const token = Cookie.get("token")
+    const response = await axios.get(`http://localhost:5000/api/products?search=${search}`, { headers: { Authorization: `Bearer ${token}` } });
+    return response.data;
+});
 
 const apiSlice = createSlice({
     name: "fetchapi",
@@ -27,7 +29,6 @@ const apiSlice = createSlice({
         builder.addCase(fetchProducts
             .rejected, (state, action) => {
                 state.isError = true;
-                console.log("Error: ", action.payload);
             });
     }
 })

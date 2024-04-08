@@ -7,7 +7,9 @@ const offerSchema = new Schema(
         description: { type: String, required: true },
         expiry_date: { type: String, required: true },
         location: { type: String, required: true }
-    }
+    }, {
+    timestamps: true
+}
 )
 
 module.exports = mongoose.model("offers", offerSchema);

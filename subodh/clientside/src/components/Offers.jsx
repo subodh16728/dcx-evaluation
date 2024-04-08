@@ -2,49 +2,40 @@ import React, { useEffect, useState } from 'react';
 import { Card, Button, Row, Col } from 'react-bootstrap';
 import axios from "axios";
 import Cookie from "js-cookie"
-import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Offers = () => {
 
-    // authentication using jwt token
-    const navigate = useNavigate();
+    const [data, setData] = useState([]);
     const token = Cookie.get("token")
     useEffect(() => {
-        if (!token) {
-            navigate("/login")
-        }
+        getOffers();
     }, [])
-    const [data, setData] = useState([]);
 
-    useEffect(() => {
-        axios.get("http://localhost:5000/api/offers")
-            .then((response) => {
-                setData(response.data);
-            })
-            .catch((error) => {
-                console.error("Error fetching data: ", error);
-            });
-    }, []);
+    // display all the offers
+    const getOffers = async () => {
+        try {
+            const response = await axios.get("http://localhost:5000/api/offers", { headers: { Authorization: `Bearer ${token}` } })
+            setData(response.data)
+        } catch (error) {
+            toast.error("Cannot fetch offers. Try again")
+        }
+    }
 
-    const handleOffer = (offerID, index) => {
-        axios.get(`http://localhost:5000/api/offers/${offerID}`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        })
-            .then((response) => {
-                // alert("Data")
-                console.log("Data", response.data)
-                alert("Offer sent successfully")
-                setData(prevData => {
-                    const newData = [...prevData];
-                    newData[index].isSent = true;
-                    return newData;
-                });
+    // get particular offer and send
+    const handleOffer = async (offerID) => {
+        try {
+            const response = await axios.get(`http://localhost:5000/api/offers/${offerID}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
             })
-            .catch((error) => {
-                console.error("Error fetching data: ", error);
-            });
+            const message = response.data.message
+            toast.success(`${message}`)
+        } catch (error) {
+            toast.error("Please try again")
+        }
     }
 
     return (
@@ -61,11 +52,7 @@ const Offers = () => {
                                     <small className='text-muted'>Location: {item.location}</small>
                                     <small className='text-muted'>Expiry date: {item.expiry_date}</small>
                                 </div>
-                                {
-                                    item.isSent ?
-                                        <Button variant="primary" className='mt-3' disabled>Already sent</Button> :
-                                        <Button variant="primary" className='mt-3' onClick={() => handleOffer(item._id, index)}>Send Offer</Button>
-                                }
+                                <Button variant="primary" className='mt-3' onClick={() => handleOffer(item._id, index)}>Send Offer</Button>
                             </Card.Body>
                         </Card>
                     </Col>

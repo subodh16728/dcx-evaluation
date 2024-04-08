@@ -1,6 +1,7 @@
 import React,{useState} from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { toast } from 'react-toastify';
+
 import 'react-toastify/dist/ReactToastify.css';
 import { Navigate } from "react-router-dom";
 import { NavLink } from "react-router-dom";
@@ -9,6 +10,7 @@ import { jwtDecode } from "jwt-decode";
 
 
 export default function Login(){
+
     const [token,setToken]=useState();
    
     const[data,setData]=useState({
@@ -26,17 +28,17 @@ export default function Login(){
         e.preventDefault();
         axios.post("http://localhost:3000/api/login",data)
         .then(res=>{
-            // console.log(res);
+            toast.success("Logged in Successfully")
+          
             const token=res.data.token;
-            // console.log(token);
-           
             localStorage.setItem("token", token);
 
             const UserId=jwtDecode(token).user.id;
-            console.log(UserId);
+            // console.log(UserId);
            
             localStorage.setItem("userId",UserId);
             setToken(token)})
+            
         .catch(err=>{
             console.log(err)
             toast.error("Incorrect Email or Password")});
@@ -65,9 +67,9 @@ export default function Login(){
                     <input type="password" placeholder="Enter Password" id="password" autoComplete="off" name="password" className="form-control rounded-0" required onChange={changeHandler}/>
                 </div>
                 <button type="submit" className="btn btn-success w-100 rounded-0">Login</button>
-                
-              
-                <NavLink to="/" className=" w-100 rounded-0">Register</NavLink>
+                <p>New User Please Create Account</p>
+
+                <NavLink to="/" className="btn btn-default border w-100 bg-light rounded-0 text-decoration-none">Register</NavLink>
             </form>
 
         </div>

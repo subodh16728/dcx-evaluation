@@ -2,34 +2,40 @@ const Tabledata=require("../Models/TableModel");
 
 exports.getAllUProducts = async (req, res) => {
     try {
-      const products = await Tabledata.find().sort({pname : 1});
+      const products = await Tabledata.find().sort({name : 1});
       res.json(products);
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
   };
-exports.createProducts=async(req,res)=>{
-    try{
-    const {pname,pdescription,pprice}=req.body;
-    console.log(pname)
-    // console.log("NewUser"+newUser);
-    let productexist= await Tabledata.findOne({pname})
-    if (productexist){
-        return res.status(400).send("Product already exists")
+
+
+exports.createProducts = async (req, res) => {
+    const NewProduct = req.body;
+ 
+    if (NewProduct != null) {
+        // console.log(NewProduct);
+        const oldproduct = await Tabledata.findOne({ name: NewProduct.name })
+       
+        if (oldproduct) {
+            return res.status(400).send(`Product already exists`)
+        }
+ 
+        await Tabledata.create(NewProduct)
+            .then((data) =>{console.log("Data inside the creation"+ data)
+            res.status(201)
+                .send("Product created successfully")})
+            .catch((err) => {
+                res.status(400).send({ error: err })
+            })
+ 
     }
-    let newProduct=new Tabledata({
-        pname,pdescription,pprice
-    })
-    newProduct.save();
-    res.status(200).send("Product Created  successfully")
-}catch(err){
-    console.log(err)
-    return res.status(500).send("Internal Server error")
-
+    else {
+        res.status(400).send("Product not created")
+    }
+ 
 }
-   
 
-}
 
 
 exports.getProductById = async (req, res) => {
@@ -53,9 +59,9 @@ exports.getProductById = async (req, res) => {
 
 
 exports.findProductByName = async (req, res) => {
-    let getName = req.query.pname
+    let getName = req.query.name
     console.log(getName);
-    let product = await Tabledata.find({ pname: getName })
+    let product = await Tabledata.find({ name: getName })
     console.log("Product " + product);
     if (product.length <= 0) {
         res.status(404).send("No product found")
@@ -88,3 +94,20 @@ exports.deleteProductById = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
+exports.updateProductById = (req, res) => {
+    const id = req.params.id;
+    const updateValue = req.body;
+    Tabledata.findByIdAndUpdate(id, updateValue)
+        .then((data) => {
+            if (!data) {
+                return res.status(400).send("Product Not Found");
+            }
+            return res.status(200).send("Updated Successfully");
+        })
+        .catch((err) => {
+            console.error("Update error:", err);
+            res.status(400).send("Bad Request" + err);
+        });
+};
+

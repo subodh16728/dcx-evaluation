@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { NavLink, useNavigate, useParams } from 'react-router-dom'
+import React, { useState, useEffect, useMemo } from 'react'
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import Button from "react-bootstrap/Button"
 import Container from "react-bootstrap/Container"
 import Form from "react-bootstrap/Form"
@@ -11,10 +11,16 @@ import $ from 'jquery';
 import 'tablesorter';
 import axios from 'axios';
 import Cookie from "js-cookie"
+import { jwtDecode } from "jwt-decode"
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import debounce from "lodash.debounce";
 
 const Dashboard = () => {
 
     const navigate = useNavigate()
+    const dispatch = useDispatch()
+    const [search, setSearch] = useState('')
 
     // authentication using jwt token
     const token = Cookie.get("token")
@@ -22,52 +28,51 @@ const Dashboard = () => {
         if (!token) {
             navigate("/login")
         }
-    }, [])
+        return () => {
+            debouncedSearch.cancel();
+        }
+    })
 
-    const [search, setSearch] = useState('')
-
-    const dispatch = useDispatch()
     useEffect(() => {
-        $("#sort-table").tablesorter();
-        // let query = {}
-        // if (showOnleB) {
-        //     query.book = true
-        // }
-        dispatch(fetchProducts());
-    }, []);
+        dispatch(fetchProducts(search));
+    }, [search]);
 
     const data = useSelector((state) => (
         state.api.data
     ))
 
-    const params = useParams();
-    const id = params.id
+    useEffect(() => {
+        $("#sort-table").tablesorter();
+    }, [data])
 
-    const handleBookmark = (data) => {
+    const handleBookmark = async (data) => {
         const productID = data._id
-        const bookmarkToggle = !data.bookmarked
-        console.log(productID)
+        const decodedToken = jwtDecode(token)
+        const userID = decodedToken._id
 
-        console.log("Data after click:", bookmarkToggle)
+        try {
+            const response = await axios.post("http://localhost:5000/api/bookmarks/add", { userID: userID, products: [{ productID: productID }] }, { headers: { Authorization: `Bearer ${token}` } })
+            const bookmarkMessage = response.data.message
+            const bookMarkStatus = response.status
+            if (bookMarkStatus === 201) {
+                toast.success(bookmarkMessage)
+            } else {
+                toast.info(bookmarkMessage)
+            }
 
-        const response = axios.put(`http://localhost:5000/api/products/edit/${productID}`, { bookmarked: bookmarkToggle })
-            .then(() => {
-                console.log("Response: ", response)
-                dispatch(fetchProducts());
-            })
-            .catch((error) => {
-                console.error("Error", error)
-            })
+        } catch (error) {
 
-    }
-
-    const handleUpdate = (data) => {
-        console.log(data);
+        }
     }
 
     const handleChange = (event) => {
         setSearch(event.target.value)
     }
+
+    // using debouce to reduce api calls
+    const debouncedSearch = useMemo(() => {
+        return debounce(handleChange, 1000)
+    }, [])
 
     return (
         <>
@@ -76,11 +81,12 @@ const Dashboard = () => {
                 <Container>
                     <Form>
                         <InputGroup className='my-3'>
-                            <Form.Control onChange={handleChange} placeholder='Search products' className='me-1' />
+                            <Form.Control type='text' onChange={debouncedSearch} placeholder='Search products...' className='me-1' />
                             <Button variant="secondary"><NavLink className="nav-link active" to="/products/add">Add Product</NavLink></Button>
                         </InputGroup>
                     </Form>
-                    <table id='sort-table' class="table table-striped">
+
+                    <table id='sort-table' className="table table-striped">
                         <thead>
                             <tr>
                                 <th scope="col">Title</th>
@@ -90,14 +96,11 @@ const Dashboard = () => {
                                 <th scope="col">Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-
-                            {
-                                data && data.filter((item) => {
-                                    return search.toLowerCase() === "" ? item : item.category.toLowerCase().includes(search)
-                                }).map((item, index) => (
+                        {data && data.length > 0 ? (
+                            <tbody>
+                                {data.map((item, index) => (
                                     <tr key={index}>
-                                        <td>{item.title}</td>
+                                        <td>{item.name}</td>
                                         <td>{item.description}</td>
                                         <td>{item.category}</td>
                                         <td>{item.price}</td>
@@ -107,27 +110,28 @@ const Dashboard = () => {
                                                 href="javascript:void(0)"
                                                 onClick={() => handleBookmark(item)}
                                             >
-                                                <i
-                                                    class={`bi ${item.bookmarked ? 'bi-bookmark-fill' : 'bi-bookmark'}`}
-                                                ></i>
+                                                <i className={`bi-bookmark`}></i>
                                             </a>
                                             <NavLink
                                                 className='text-dark'
                                                 to={`/products/edit/${item._id}`}
-                                                onClick={() => handleUpdate(item)}
                                             >
-                                                <i class="bi bi-pencil-square ms-3"></i>
+                                                <i className="bi bi-pencil-square ms-3"></i>
                                             </NavLink>
                                         </td>
                                     </tr>
-                                ))
-                            }
-
-                        </tbody>
-                    </table>
+                                ))}
+                            </tbody>
+                        ) : (
+                            <tbody>
+                                <tr>
+                                    <td colSpan={5} className='text-center'>No Results</td>
+                                </tr>
+                            </tbody>
+                        )}</table>
                 </Container>
             </div>
-
+            <Outlet />
         </>
     )
 }
