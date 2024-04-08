@@ -1,32 +1,42 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { postProduct } from "../Service/productApiService";
-import Nav from "./navbar";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import { modifyById } from "../Service/productApiService";
 import { getProductById } from "../Service/productApiService";
+import Features from "./feature";
+import "../css/addmodify.css";
+import Tooltip from "react-bootstrap/Tooltip";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 
 const AddModify = () => {
-  const [data, setData] = useState({});
-  const [originalData,setOriginalData]=useState({});
+  const [data, setData] = useState({
+    name: "",
+    description: "",
+    price: 0,
+    category: "",
+    features: [],
+  });
+  const [originalData, setOriginalData] = useState({});
+  const [features, setFeatures] = useState({
+    title: "",
+    value: "",
+  });
 
   const postData = async () => {
     try {
       let receivedProduct = await postProduct(data);
-      console.log(receivedProduct);
+      toast.success("Product Added Successfully!", { autoClose: 1000 });
       navigate("/product");
     } catch (error) {
       console.error("Error fetching products:", error);
-      toast.error("Product already availabe!",{autoClose:1000});
+      toast.error("Product already availabe!", { autoClose: 1000 });
     }
   };
 
   const populateModifiedProduct = async (id, data) => {
     try {
-      console.log("ID:", id);
-      console.log("Data:", data);
       let receivedProduct = await modifyById(id, data);
-      console.log(receivedProduct);
       if (!receivedProduct) {
         throw new Error("Failed to update product");
       }
@@ -39,7 +49,6 @@ const AddModify = () => {
   const populateProductById = async () => {
     try {
       let receivedProduct = await getProductById(id);
-      console.log(receivedProduct)
       setData(receivedProduct);
       setOriginalData(receivedProduct);
     } catch (error) {
@@ -51,10 +60,6 @@ const AddModify = () => {
   const { id } = useParams();
 
   const handleChange = (event) => {
-    console.log(event);
-    console.log(event.target.name);
-    console.log(event.target.value);
-
     let newData = { ...data };
     newData[event.target.name] = event.target.value;
     setData(newData);
@@ -66,16 +71,16 @@ const AddModify = () => {
       if (id) {
         // Check if the data is modified
         const isDataModified =
-          data.productName !== originalData.productName ||
-          data.productImageUrl !== originalData.productImageUrl ||
-          data.productDiscription !== originalData.productDiscription ||
-          data.productPrice !== originalData.productPrice ||
-          data.productCategory !== originalData.productCategory;
-  
+          data.name !== originalData.name ||
+          data.description !== originalData.description ||
+          data.price !== originalData.price ||
+          data.category !== originalData.category ||
+          data.features !== originalData.features;
+
         if (isDataModified) {
           populateModifiedProduct(id, data);
         } else {
-          toast.error("update atleast any one filed.",{autoClose:1000})
+          toast.error("Update atleast any one filed.", { autoClose: 1000 });
           console.log("No changes made");
         }
       } else {
@@ -85,7 +90,6 @@ const AddModify = () => {
       console.error("Error:", error.message);
     }
   };
-  
 
   useEffect(() => {
     try {
@@ -97,122 +101,171 @@ const AddModify = () => {
     }
   }, []);
 
- const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
   useEffect(() => {
     if (!token) {
-      toast.success("Please login first.",{autoClose:1000})
+      toast.success("Please login first.", { toastId: "1", autoClose: 1000 });
       navigate("/signin");
     }
   }, []);
 
+  const addFeature = () => {
+    setData({
+      ...data,
+      features: [...data.features, features],
+    });
+    setFeatures({ title: "", value: "" });
+  };
+
+  const handleChangeInChild = (index, name, value) => {
+    const updatedFeatures = [...data.features];
+    updatedFeatures[index][name] = value;
+    setData({ ...data, features: updatedFeatures });
+  };
+
+  const handleDeleteInChild = (index) => {
+    const updatedFeatures = [...data.features];
+    if (data.features.length === 1) {
+      toast.success("Atleast one feature should be there.");
+    } else {
+      updatedFeatures.splice(index, 1);
+    }
+
+    setData({ ...data, features: updatedFeatures });
+  };
+
   return (
     <>
-      <div
-        className="row"
-        style={{
-          minHeight: "100vh",
-          backgroundImage: 'url("/images/product1.jpg")',
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          backgroundAttachment: "fixed",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <div className="w-50 mx-auto mt-3">
-          <div className=" shadow p-3 bg-body-tertiary rounded mx-auto my-auto">
-            <p className="h4 text-white bg-secondary p-2 text-center">
-              {id ? "Update Product" : "Add Product"}
-            </p>
-            <form
-              className=" border border-secondary p-3  "
-              onSubmit={handleSubmit}
-            >
-              <div className="mb-2">
-                <label className="form-label" htmlFor="productName">
-                  <b>Product Name</b>
-                </label>
-                <input
-                  value={data.productName}
-                  name="productName"
-                  onChange={handleChange}
-                  className="form-control"
-                  id="productName"
-                  type="text"
-                  required
-                />
-              </div>
-              <div className="mb-2">
-                <label className="form-label" htmlFor="productImageUrl">
-                  <b>Product Images</b>
-                </label>
-                <input
-                  onChange={handleChange}
-                  name="productImageUrl"
-                  className="form-control"
-                  id="productImageUrl"
-                  type="file"
-                  accept="image/*"
-                  required
-                />
-              </div>
-
-              <div className="mb-2">
-                <label className="form-label" htmlFor="productDiscription">
-                  <b>Product Description</b>
-                </label>
-                <input
-                  name="productDiscription"
-                  onChange={handleChange}
-                  value={data.productDiscription}
-                  className="form-control"
-                  id="productDiscription"
-                  type="text"
-                  required
-                />
-              </div>
-              <div className="mb-2">
-                <label className="form-label" htmlFor="productCategory">
-                  <b>Product Category</b>
-                </label>
-                <input
-                  name="productCategory"
-                  onChange={handleChange}
-                  value={data.productCategory}
-                  className="form-control"
-                  id="productCategory"
-                  type="text"
-                  required
-                />
-              </div>
-              <div className="mb-3">
-                <label className="form-label" htmlFor="productPrice">
-                  <b>Product Price</b>
-                </label>
-                <input
-                  name="productPrice"
-                  onChange={handleChange}
-                  value={data.productPrice}
-                  className="form-control"
-                  id="productPrice"
-                  type="number"
-                  min={1}
-                  required
-                />
-              </div>
-              <div className="container-fluid d-flex flex-row-reverse ">
-                <button type="submit" className="btn btn-secondary">
-                  {id ? "Update Product" : "Add Product"}
+      <div className="main">
+        <div className="formContainer">
+          <p className="pTag">
+            <h4>{id ? "Update Product" : "Add Product"}</h4>
+          </p>
+          <form className="formField" onSubmit={handleSubmit}>
+            <div className="fields">
+              <div className="btnDiv">
+                <OverlayTrigger
+                  overlay={(props) => (
+                    <Tooltip {...props}>Save product from here!</Tooltip>
+                  )}
+                  placement="top"
+                >
+                  <button type="submit" className="Btn">
+                  {id ? " Save " : " Save "}
                 </button>
-                <button
-                  className="btn btn-secondary me-2"
+                </OverlayTrigger>
+                <OverlayTrigger
+                  overlay={(props) => (
+                    <Tooltip {...props}>Cancel change from here!</Tooltip>
+                  )}
+                  placement="top"
+                >
+                  <button
+                  className="Btn me-2"
+                  title="Cancel"
                   onClick={() => navigate("/product")}
                 >
                   Cancel
                 </button>
+                </OverlayTrigger>
               </div>
-            </form>
-          </div>
+              <label className="form-label" htmlFor="name">
+                <b>Product Name :</b>
+              </label>
+              <input
+                value={data.name}
+                name="name"
+                onChange={handleChange}
+                className="form-control"
+                id="name"
+                type="text"
+                required
+              />
+            </div>
+            <div className=" fields">
+              <label className="form-label" htmlFor="category">
+                <b>Product Category :</b>
+              </label>
+              <select
+                id="category"
+                className="form-control"
+                name="category"
+                value={data.category}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select Category For Product</option>
+                <option value="men's clothing">Men's Clothing</option>
+                <option value="jewelery">Jewelry</option>
+                <option value="electronics">Electronics</option>
+                <option value="women's clothing">Women's Clothing</option>
+              </select>
+            </div>
+            <div className=" fields">
+              <label className="form-label" htmlFor="price">
+                <b>Product Price :</b>
+              </label>
+              <input
+                name="price"
+                onChange={handleChange}
+                value={data.price}
+                className="form-control"
+                id="price"
+                type="number"
+                min={1}
+                required
+              />
+            </div>
+            <div className="fields">
+              <label className="form-label" htmlFor="description">
+                <b>Product Description :</b>
+              </label>
+              <textarea
+                name="description"
+                onChange={handleChange}
+                value={data.description}
+                className="form-control"
+                id="description"
+                type="text"
+                rows={3}
+                required
+              />
+            </div>
+            <div>
+              <label className="form-label" htmlFor="feature">
+                <b>{data.features.length >= 1 ? "Product features" : ""}</b>
+              </label>
+              {data.features.map((dataItem, index) => {
+                return (
+                  <Features
+                    key={index}
+                    index={index}
+                    data={dataItem}
+                    onChange={handleChangeInChild}
+                    onDelete={handleDeleteInChild}
+                  />
+                );
+              })}
+            </div>
+            <div className=" fields">
+              <div className="btnDiv">
+                <OverlayTrigger
+                  overlay={(props) => (
+                    <Tooltip {...props}>Add Features from here!</Tooltip>
+                  )}
+                  placement="top"
+                >
+                  <button
+                    className="featureBtn"
+                    onClick={addFeature}
+                    title="Add features"
+                  >
+                    Add Features
+                  </button>
+                </OverlayTrigger>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </>

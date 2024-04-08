@@ -1,11 +1,17 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getProductById } from "../Service/productApiService";
-import Nav from "./navbar";
-import {toast} from "react-toastify"
+import { toast } from "react-toastify";
+import "../css/productdetail.css";
 
 export default function ProductDetails() {
-  const [data, setData] = useState({});
+  const [data, setData] = useState({
+    name: "",
+    description: "",
+    price: 0,
+    category: "",
+    features: [],
+  });
   const { id } = useParams();
 
   const populateProductById = async () => {
@@ -21,7 +27,7 @@ export default function ProductDetails() {
   const token = localStorage.getItem("token");
   useEffect(() => {
     if (!token) {
-      toast.success("Please login first.",{autoClose:1000})
+      toast.success("Please login first.", { autoClose: 1000 });
       navigate("/signin");
     }
   }, []);
@@ -32,55 +38,63 @@ export default function ProductDetails() {
     }
   }, []);
 
-
   return (
     <>
-      <div
-       className="row"
-       style={{
-         minHeight: "100vh",
-         backgroundImage: 'url("/images/product1.jpg")',
-         backgroundSize: "cover",
-         backgroundRepeat: "no-repeat",
-         backgroundAttachment: "fixed",
-         display: "flex",
-         flexDirection: "column",
-       }}
-       >
-        <div className="product-container w-50 mx-auto mt-5">
-          <div className="border border-dark shadow p-3 mb-5 bg-body-tertiary rounded my-auto">
-            <div className=" p-3">
-            {data && (
-              <div className="product d-flex">
-                <div style={{ marginLeft: "20px" }}>
-                  <div>
-                    <h2 style={{ textAlign: "center" }}>{data.productName}</h2>
+        <div className="productdetailmain">
+          <div className="productdetailformContainer">
+            <div className=" p-2">
+              <p className="h4 text-white bg-secondary p-2 text-center">
+                Product Description
+              </p>
+              {data && (
+                <div>
+                  <div className="border border-secondary p-3">
+                    <h3>{data.name}</h3>
+                    <hr />
+                    <div
+                      className="mb-2"
+                      style={{
+                        textAlign: "right",
+                        justifyContent: "space-between",
+                        display: "flex",
+                        textDecorationColor: "grey",
+                      }}
+                    >
+                      <small className="ms-3">
+                        <b>Category : </b> {data.category}
+                      </small>
+                      <small className="me-5">
+                        <b>Price : </b> <i class="bi bi-currency-rupee"></i>
+                        {data.price}
+                      </small>
+                    </div>
+                    <hr />
+                    <p className="descriptions">
+                      <b> Product description:</b>
+                      <br />
+                      <small>{data.description}</small>
+                    </p>
+                    <p className="descriptions mb-2">
+                      <b> Product Features:</b>
+                    </p>
+                    <div className="container text-container mb-2">
+                      <div class="container text-center">
+                        <div class="row row-cols-3">
+                          {data.features.map((dataItem, index) => (
+                            <p key={index} className="title ms-5 mb-1">
+                              <strong>{dataItem.title}</strong>:{" "}
+                              {dataItem.value}
+                            </p>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <img
-                    src={`/images/${data.productImageUrl && data.productImageUrl.split("\\").pop()}`}
-                    alt={data.productName}
-                    width={150}
-                    height={200}
-                    style={{
-                      border: "1px solid #101010",
-                      borderRadius: "5px", 
-                    }}
-                  />
-                  <h5 style={{ textAlign: "center" }}>
-                    Price: ${data.productPrice}
-                  </h5>
                 </div>
-                <div style={{ marginLeft: "20px", marginTop: "50px" }}>
-                  <p className="descriptions">
-                    <small>{data.productDiscription}</small>
-                  </p>
-                </div>
-              </div>
-            )}
+              )}
             </div>
           </div>
         </div>
-      </div>
     </>
   );
 }

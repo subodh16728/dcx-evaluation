@@ -3,14 +3,16 @@ import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
-import Nav from "./navbar";
 import { getProductOffers } from "../Service/offerApiService";
 import { sendEmailtoUser } from "../Service/emailApiService";
+import "../css/offer.css"
 
 export default function Offers() {
   const navigate = useNavigate();
   let token = localStorage.getItem("token");
-  const [offers, setOffers] = useState([]);
+  const [offers, setOffers] = useState([
+    { tittle: "", description: "", discount: 0, startDate: "", endDate: "" },
+  ]);
 
   let decodedToken = null;
   if (token) {
@@ -20,22 +22,16 @@ export default function Offers() {
   const populateOffers = async () => {
     const response = await getProductOffers();
     try {
-      console.log(response);
       setOffers(response);
     } catch (error) {
       console.error(`Error fetching Offers: ${error}`);
     }
   };
 
-  useEffect(() => {
-    populateOffers();
-  }, []);
-
   const sendEmail = async (data) => {
     const email = decodedToken.email;
     try {
       const receivedInfo = await sendEmailtoUser(email, data);
-      console.log("Data", receivedInfo);
       if (receivedInfo) {
         toast.success("Offers sent to your Gmail", { autoClose: 1000 });
       }
@@ -47,31 +43,21 @@ export default function Offers() {
 
   useEffect(() => {
     if (!token) {
-      toast.success("Please login first.", { autoClose: 1000 });
+      toast.success("Please login first.", { toastId: "1", autoClose: 1000 });
       navigate("/signin");
+    } else {
+      populateOffers();
     }
   }, []);
 
   return (
     <>
-      <div
-        className="row"
-        style={{
-          minHeight: "100vh",
-          backgroundImage: 'url("/images/product1.jpg")',
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          backgroundAttachment: "fixed",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <div className="w-50 mx-auto mt-5">
-          <div className="shadow p-3 mb-5 bg-body-tertiary rounded my-auto">
-            <p className="h4 text-white bg-secondary p-2 text-center">
+        <div className="offerMain">
+          <div className="offerContainer">
+            <p className="Ptag">
               Available Offers
             </p>
-            <div className="ms-3">
+            <div className="offerField">
               {offers &&
                 offers.map((offer, index) => (
                   <div className="offer-box" key={index}>
@@ -100,7 +86,6 @@ export default function Offers() {
             </div>
           </div>
         </div>
-      </div>
-    </>
+      </>
   );
 }

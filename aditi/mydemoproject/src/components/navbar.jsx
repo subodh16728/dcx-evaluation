@@ -1,7 +1,8 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
+import "../css/navbar.css"
 
 export default function Nav() {
   const navigate = useNavigate();
@@ -10,98 +11,106 @@ export default function Nav() {
   const handleLogOut = () => {
     localStorage.clear();
     toast.success("You have been logged out.", { autoClose: 1000 });
-    navigate("/");
+    navigate("/product");
   };
 
   const data = useSelector((state) => state.api.data);
 
-
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div className="container-fluid">
-        <b className="navbar-brand ms-2">
-          <i className="bi bi-shop-window"></i>
-        </b>
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-        <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-            <li className="nav-item">
-              <NavLink
-                className="nav-link active"
-                aria-current="page"
-                to="/"
-              >
-                Products
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink
-                className="nav-link active"
-                aria-current="page"
-                to="/product/add"
-              >
-                Add Product
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink
-                className="nav-link active"
-                aria-current="page"
-                to="/product/offer"
-              >
-                Offers
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink
-                className="nav-link active"
-                aria-current="page"
-                to="/product/wishlist"
-              >
-                Wishlist
-              </NavLink>
-            </li>
-          </ul>
-          <div className="navbar-text me-3">
-            {token && data && data.username ? (
-              <>
-                <NavLink className="nav-link">
-                  <i className="fa fa-user" aria-hidden="true"></i>
+    <>
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div className="container-fluid">
+          <b className="navbar-brand ms-2">
+            <NavLink className="nav-link active" aria-current="page" to="/">
+              <i className="bi bi-shop-window"></i>
+            </NavLink>
+          </b>
+          <button
+            className="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span className="navbar-toggler-icon"></span>
+          </button>
+          <div className="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+              <li className="nav-item">
+                <NavLink
+                  className="nav-link active"
+                  aria-current="page"
+                  to="/product"
+                >
+                  Products
                 </NavLink>
-                <b><span className="text-white">Welcome {data.username}!</span></b>
-              </>
-            ) : (
-              <b><span className="text-white">Welcome Guest!</span></b>
-            )}
-          </div>
-          <div>
-            {token ? (
-              <button
-                className="btn btn primary btn-sm  btn-outline-light"
-                onClick={handleLogOut}
-              >
-                Logout
-              </button>
+              </li>
+              <li className="nav-item">
+                <NavLink
+                  className="nav-link active"
+                  aria-current="page"
+                  to="/product/add"
+                >
+                  Add Product
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink
+                  className="nav-link active"
+                  aria-current="page"
+                  to="/product/offer"
+                >
+                  Offers
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink
+                  className="nav-link active"
+                  aria-current="page"
+                  to="/product/wishlist"
+                >
+                  Wishlist
+                </NavLink>
+              </li>
+            </ul>
+            {token && data && data.username ? (
+              <div class="dropdown">
+                <button
+                  class="btn btn-outline-dark dropdown-toggle"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <b>
+                    <span className="text-white">Welcome {data.username}!</span>
+                  </b>
+                </button>
+
+                <ul class="dropDownItemmenu dropdown-menu">
+                  <li>
+                    <a class="dropDownItem dropdown-item" href="#" onClick={handleLogOut}>
+                    <i class="bi bi-box-arrow-in-left"></i> Logout
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropDownItem dropdown-item" href="#">
+                    <i class="bi bi-person-fill"></i> User Profile
+                    </a>
+                  </li>
+                </ul>
+              </div>
             ) : (
               <NavLink to="/signin">
                 <button className="btn btn primary btn-sm  btn-outline-light">
-                  Login
+                <i class="bi bi-box-arrow-in-right"></i>  Login
                 </button>
               </NavLink>
             )}
           </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+    </>
   );
 }

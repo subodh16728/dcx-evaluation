@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import Nav from "./navbar";
 import { jwtDecode } from "jwt-decode";
 import { modifyById } from "../Service/userApiService";
 import { getWishlistedProducts } from "../Service/userApiService";
 import { toast } from "react-toastify";
+import "../css/wishlist.css"
 
 const WishList = () => {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState([
+    {
+      name: "",
+      description: "",
+      price: 0,
+      category: "",
+      features: [],
+    },
+  ]);
   const [sortOrder, setSortOrder] = useState("ascending");
   const [userID, setUserID] = useState(null);
 
@@ -16,7 +24,7 @@ const WishList = () => {
 
   useEffect(() => {
     if (!token) {
-      toast.success("Please login first.",{autoClose:1000})
+      toast.success("Please login first.",{toastId:'1',autoClose:1000})
       navigate("/signin");
     } else {
       const decodedToken = jwtDecode(token);
@@ -29,7 +37,6 @@ const WishList = () => {
   const populateWishlist = async (userID) => {
     try {
       let receivedProduct = await getWishlistedProducts(userID);
-      console.log("total products: ", receivedProduct.wishlist);
       setData(receivedProduct.wishlist);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -39,7 +46,6 @@ const WishList = () => {
   const populateWishlistedProduct = async (id, data) => {
     try {
       let receivedProduct = await modifyById(id, data);
-      console.log(receivedProduct);
       if (receivedProduct) {
         populateWishlist(userID);
       }
@@ -53,8 +59,8 @@ const WishList = () => {
   const handleSortByName = () => {
     const sortedData = data;
     sortedData.sort((a, b) => {
-      const nameA = a.productName.toLowerCase();
-      const nameB = b.productName.toLowerCase();
+      const nameA = a.name.toLowerCase();
+      const nameB = b.name.toLowerCase();
 
       if (sortOrder === "ascending") {
         return nameA.localeCompare(nameB);
@@ -69,33 +75,19 @@ const WishList = () => {
 
   const handleBookmark = (data) => {
     const productID = data._id;
-    console.log(data);
-    console.log(productID);
     populateWishlistedProduct(userID, { _id: productID });
   };
 
   return (
     <>
-      <div
-        className="row"
-        style={{
-          minHeight: "100vh",
-          backgroundImage: 'url("/images/product1.jpg")',
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          backgroundAttachment: "fixed",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <div className="w-50 mx-auto mt-5">
-          <div className="shadow p-3 mb-5 bg-body-tertiary rounded my-auto">
-            <p className="h4 text-white bg-secondary p-2 text-center">
+        <div className="wishlistMain">
+          <div className="wishlistContainer">
+            <p className="Ptag">
               Your Wishlist
             </p>
             {data.length > 0 ? (
-              <div>
-                <table className="table">
+              <div className="wishlistFormField">
+                <table className="table table-striped">
                   <thead>
                     <tr>
                     <th className="sorting-head" onClick={handleSortByName}>
@@ -110,15 +102,18 @@ const WishList = () => {
                     {data.map((product) => (
                       <tr key={product._id}>
                         <td>
-                          <NavLink to={`/productDetails/${product._id}`}>
-                            {product.productName}
+                          <NavLink className="name" to={`/productDetails/${product._id}`}>
+                            {product.name}
                           </NavLink>
                         </td>
-                        <td>{product.productPrice}</td>
-                        <td>{product.productCategory}</td>
+                        <td>{product.price}</td>
+                        <td>{product.category}</td>
                         <td>
-                          <a href="#" onClick={() => handleBookmark(product)}>
-                            <i className="bi bi-bookmark-heart-fill"></i>
+                        <a
+                            href="javaScript:void(0)"
+                            onClick={() => handleBookmark(product)}
+                          >
+                            <i className={"bi bi-bag-heart ms-4"}></i>
                           </a>
                         </td>
                       </tr>
@@ -127,13 +122,12 @@ const WishList = () => {
                 </table>
               </div>
             ) : (
-              <div className="ms-4">
-                <img src="/images/NoWishlist.png" alt="wishlist" />
+              <div style={{ textAlign: "center" }}>
+                <img src="/images/NoWishlist.png" alt="wishlist" width={700} height={450}  />
               </div>
             )}
           </div>
         </div>
-      </div>
     </>
   );
 };

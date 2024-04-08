@@ -1,7 +1,6 @@
 import { useState } from "react";
 import Joi from "joi";
 import { useNavigate } from "react-router-dom";
-import Nav from "./navbar";
 import { signUpUser } from "../Service/userApiService";
 
 const SignUp = () => {
@@ -16,7 +15,6 @@ const SignUp = () => {
   const signUpUserInfo = async () => {
     try {
       let receivedInfo = await signUpUser(user);
-      console.log(receivedInfo);
       navigate("/signin");
     } catch (err) {
       console.log(err);
@@ -81,9 +79,8 @@ const SignUp = () => {
   return (
     <>
       <div
-        className="row"
         style={{
-          minHeight: "100vh",
+          minHeight: "91vh",
           backgroundImage: 'url("images/register.jpg")',
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",

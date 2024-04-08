@@ -1,12 +1,9 @@
 import { Link } from "react-router-dom";
 import React, { useState } from "react";
-import Nav from "./navbar";
 import Joi from "joi";
 import { useNavigate } from "react-router-dom";
 import { signInUser } from "../Service/userApiService";
-import { useDispatch } from 'react-redux';
-import { fetchUserDetails } from '../store/slice/getUserslice';
-import { jwtDecode } from "jwt-decode";
+import {toast} from "react-toastify";
 
 function SignIn() {
   const [user, setUser] = useState({
@@ -14,19 +11,22 @@ function SignIn() {
     password: "",
   });
 
-  const dispatch = useDispatch();
-
   const signInUserInfo = async () => {
     try {
       let receivedInfo = await signInUser(user);
-      console.log(receivedInfo);
-      localStorage.setItem("token", receivedInfo.token);
-      if (receivedInfo) {
-        const decodedToken = jwtDecode(receivedInfo.token);
-        console.log(decodedToken._id);
-        dispatch(fetchUserDetails(decodedToken._id));
+      if (receivedInfo.success) {
+        if(localStorage.getItem("token")){
+          toast.success(localStorage.getItem('name')+ " already logged in");
+          navigate('/');
+        }else{
+          toast.success(receivedInfo.message);
+          localStorage.setItem('token', receivedInfo.token);
+          localStorage.setItem('userId', receivedInfo.id);
+          localStorage.setItem('name', receivedInfo.name);
+          navigate('/');
+        }
+       
       }
-      navigate("/");
     } catch (err) {
       console.log(err);
       setErrRes(err);
@@ -68,18 +68,19 @@ function SignIn() {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    setErrors(validate());
-    if (errors) return;
+    const validationErrors = validate();
+    setErrors(validationErrors);
+    if (validationErrors) return;
 
     signInUserInfo();
+    
   };
 
   return (
     <>
       <div
-        className="row"
         style={{
-          minHeight: "100vh",
+          minHeight: "91vh",
           backgroundImage: 'url("/images/login.jpg")',
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
@@ -129,6 +130,7 @@ function SignIn() {
                   id="password"
                   type="password"
                   className="form-control"
+                  autoComplete="current-password"
                 />
                 {errors && (
                   <small className="text-danger">{errors.password}</small>

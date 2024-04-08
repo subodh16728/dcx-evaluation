@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { getproducts, getsearchedProducts } from "../Service/productApiService";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import Nav from "./navbar";
 import { modifyById } from "../Service/userApiService";
 import { toast } from "react-toastify";
-
+import "../css/product.css";
 const Product = () => {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState([
+    {
+      _id: 0,
+      name: "",
+      description: "",
+      price: 0,
+      category: "",
+      features: [],
+    },
+  ]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("ascending");
   const navigate = useNavigate();
@@ -17,7 +25,7 @@ const Product = () => {
   if (token) {
     decodedToken = jwtDecode(token);
   }
-  
+
   const populateProduct = async () => {
     try {
       let receivedProduct = await getproducts();
@@ -32,29 +40,27 @@ const Product = () => {
   const populateWishlistedProduct = async (id, data) => {
     try {
       let receivedProduct = await modifyById(id, data);
-      console.log(receivedProduct);
-      toast.success(receivedProduct.message,{autoClose:1000});
+      toast.success(receivedProduct.message, { autoClose: 1000 });
     } catch (error) {
       console.error("Error fetching products:", error);
-      toast.error(error.receivedProduct.message,{autoClose:1000});
+      toast.error(error.receivedProduct.message, { autoClose: 1000 });
     }
   };
 
   const searchedProducts = async (searchTerm) => {
-
     try {
       let receivedProduct = await getsearchedProducts(searchTerm);
-        setData(receivedProduct);
+      setData(receivedProduct);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
-}
+  };
 
   useEffect(() => {
-    let timerOut = setTimeout ( () => {
+    let timerOut = setTimeout(() => {
       searchedProducts(searchTerm);
-    },1000);
-    return () => clearTimeout (timerOut);
+    }, 1000);
+    return () => clearTimeout(timerOut);
   }, [searchTerm]);
 
   useEffect(() => {
@@ -68,8 +74,8 @@ const Product = () => {
   const handleSortByName = () => {
     const sortedData = data;
     sortedData.sort((a, b) => {
-      const nameA = a.productName.toLowerCase();
-      const nameB = b.productName.toLowerCase();
+      const nameA = a.name.toLowerCase();
+      const nameB = b.name.toLowerCase();
 
       if (sortOrder === "ascending") {
         return nameA.localeCompare(nameB);
@@ -83,97 +89,90 @@ const Product = () => {
   };
 
   const handleBookmark = (data) => {
-  
     if (!token) {
-      toast.success("Please login first.",{autoClose:1000})
+      toast.success("Please login first.", { autoClose: 1000 });
       navigate("/signin");
-    }else{
+    } else {
       const productID = data._id;
       const userID = decodedToken._id;
-      console.log(data);
-      console.log(productID);
+
       populateWishlistedProduct(userID, { _id: productID });
     }
-    
   };
 
   return (
     <>
-      <div
-        className="row"
-        style={{
-          minHeight: "100vh",
-          backgroundImage: 'url("images/product1.jpg")',
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          backgroundAttachment: "fixed",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <div className="w-50 mx-auto mt-5">
-          <div className="shadow p-3 mb-5 bg-body-tertiary rounded my-auto">
-            <p className="h4 text-white bg-secondary p-2 text-center">
-              Product Table
-            </p>
-            <form className="d-flex" role="search">
-              <input
-                type="text"
-                placeholder="Search for Product "
-                value={searchTerm}
-                onChange={handleSearchInputChange}
-                className="searchBox mx-auto"
-              />
-            </form>
-            <div>
-            {data.length > 0 ? (
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th className="sorting-head" onClick={handleSortByName}>
-                      P.Name {sortOrder === "ascending" ? "↑" : "↓"}
-                    </th>
-                    <th>P.Price</th>
-                    <th>P.Category</th>
-                    <th>Wishlist</th>
-                    <th>Edit</th>
-                  </tr>
-                </thead>
+      <div className="productMain">
+        <div className="productContainer">
+          <p className="Ptag">Product Table</p>
+          <form className="d-flex" role="search">
+            <input
+              type="text"
+              placeholder="Search for Product "
+              value={searchTerm}
+              onChange={handleSearchInputChange}
+              className="searchBox"
+            />
+          </form>
+          <div className="productFormField">
+            <table className="table table-striped">
+              <thead>
+                <tr>
+                  <th className="sorting-head" onClick={handleSortByName}>
+                    P.Name {sortOrder === "ascending" ? "↑" : "↓"}
+                  </th>
+                  <th>P.Price</th>
+                  <th>P.Category</th>
+                  <th>Wishlist</th>
+                  <th>Edit</th>
+                </tr>
+              </thead>
+              {data.length > 0 ? (
                 <tbody>
                   {data.map((product) => (
                     <tr key={product._id}>
                       <td>
-                        <NavLink to={`/productDetails/${product._id}`}>
-                          {product.productName}
+                        <NavLink
+                          className="name"
+                          to={`/productDetails/${product._id}`}
+                        >
+                          <p>{product.name}</p>
                         </NavLink>
                       </td>
-                      <td>{product.productPrice}</td>
-                      <td>{product.productCategory}</td>
-                      <td className="text-center">
+                      <td>{product.price}</td>
+                      <td>{product.category}</td>
+                      <td>
                         <a
-                          href="#"
+                          href="javaScript:void(0)"
                           onClick={() => handleBookmark(product)}
                         >
-                          <i
-                            class={"bi bi-bookmark-heart-fill"}
-                          ></i>
+                          <i className={"bi bi-bag-heart ms-4"}></i>
                         </a>
                       </td>
                       <td>
-                        {product._id ? (
+                        {token ? (
                           <NavLink to={`/product/modify/${product._id}`}>
-                            <i className="bi bi-pencil-fill me-3"></i>
+                            <i className="bi bi-pencil-fill"></i>
                           </NavLink>
-                        ) : null}
+                        ) : (
+                          <NavLink to="/signin">
+                            <i className="bi bi-pencil-fill"></i>
+                          </NavLink>
+                        )}
                       </td>
                     </tr>
                   ))}
                 </tbody>
-              </table>
               ) : (
-                <p className="text-center mt-3">No items found.</p>
+                <tbody>
+                  <tr>
+                    <td colSpan={5}>
+                      <p className="text-center mt-3">No items found.</p>
+                    </td>
+                  </tr>
+                </tbody>
               )}
-            </div>
+            </table>
           </div>
         </div>
       </div>

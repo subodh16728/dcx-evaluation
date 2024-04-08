@@ -1,0 +1,7 @@
+.trash{
+    cursor: pointer !important;
+    color: rgb(228, 113, 113);
+  }
+  .trash:hover{
+    color: rgb(238, 4, 4);
+  }
