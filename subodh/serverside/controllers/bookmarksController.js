@@ -23,7 +23,6 @@ exports.addBookmarks = async (req, res) => {
 
             const userID = req.body.userID
             const products = req.body.products
-            const bookmarked = req.body.bookmarked
 
             if (!userID) {
                 return res.status(400).json({
@@ -35,7 +34,7 @@ exports.addBookmarks = async (req, res) => {
 
             const existingUser = await Bookmarks.findOne({ userID })
             if (existingUser === null) {
-                const savedData = await Bookmarks.create({ userID: req.body.userID, products: [{ productID: products[0].productID, bookmarked }] })
+                const savedData = await Bookmarks.create({ userID: req.body.userID, products: [{ productID: products[0].productID }] })
                 res.status(201).json({
                     message: `Bookmark added sucessfully`,
                     data: savedData,
@@ -46,13 +45,13 @@ exports.addBookmarks = async (req, res) => {
             else {
                 const alreadyMarkedProductId = [];
                 {
-                    existingUser.products.map((item, index) => {
+                    existingUser.products.map((item) => {
                         alreadyMarkedProductId.push(item.productID.toString())
                     })
                 }
 
                 if (!alreadyMarkedProductId.includes(products[0].productID)) {
-                    existingUser.products.push({ productID: products[0].productID, bookmarked });
+                    existingUser.products.push({ productID: products[0].productID });
                     await existingUser.save()
                     return res.status(201).json({
                         message: `Bookmark added sucessfully`,
@@ -75,7 +74,7 @@ exports.addBookmarks = async (req, res) => {
             }
         } catch (error) {
             res.status(500).json({
-                message: error,
+                message: `Error: Try again!`,
                 error: true,
                 success: false
             })

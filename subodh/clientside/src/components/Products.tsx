@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Joi from "joi";
 import Cookie from "js-cookie"
@@ -6,20 +6,20 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Features from './Features';
+import {ErrorContainer, Feature, Product} from "../utils/model";
 
 const Products = () => {
 
-    const [loading, setLoading] = useState(false);
-    const [errors, setErrors] = useState({});
+    const [errors, setErrors] = useState<ErrorContainer>({});
     const navigate = useNavigate();
-    const [feature] = useState(
+    const [feature] = useState<Feature>(
         {
             title: "",
             value: ""
         }
     )
 
-    const [data, setData] = useState({
+    const [data, setData] = useState<Product>({
         name: "",
         category: "",
         price: "",
@@ -56,13 +56,13 @@ const Products = () => {
         })
     }
 
-    const handleChangeFeatures = (index, name, value) => {
+    const handleChangeFeatures = (index: number, name: string, value: string) => {
         const updatedFeatures = [...data.features];
         updatedFeatures[index][name] = value;
         setData({ ...data, features: updatedFeatures });
     };
 
-    const handleDeleteFeatures = (index) => {
+    const handleDeleteFeatures = (index: number) => {
         const updatedFeatures = [...data.features];
         updatedFeatures.splice(index, 1);
         setData({ ...data, features: updatedFeatures });
@@ -72,9 +72,10 @@ const Products = () => {
         navigate("/dashboard")
     }
 
-    const handleChange = (e) => {
+    const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         let newData = { ...data };
-        newData[e.target.name] = e.target.value;
+        let keyName: string = (event.target as HTMLInputElement).name; // features
+        newData[keyName as keyof Omit<Product, "features">] = (event.target as HTMLInputElement).value; // newData.features = event.target.value
         setData(newData);
     }
 
@@ -86,31 +87,23 @@ const Products = () => {
         } catch (error) {
             console.error(error)
         }
-
     }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        if (loading) {
-            return;
-        }
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
 
         const json = JSON.parse(JSON.stringify(data));
         json["bookmarked"] = false;
         const { error } = productSchema.validate(data, { abortEarly: true });
 
         if (error) {
-            const valErr = {};
+            const valErr:ErrorContainer = {};
             error.details.forEach((err) => {
                 valErr[err.path[0]] = err.message;
             });
             setErrors(valErr);
-            console.log(valErr)
             return;
         }
-
-        setLoading(true);
 
         try {
             if (id) {
@@ -121,6 +114,7 @@ const Products = () => {
                 }
             } else {
                 const response = await axios.post("http://localhost:5000/api/products/add", json, { headers: { Authorization: `Bearer ${token}` } });
+                console.log("Added product response: ",response)
                 if (response.status === 201) {
                     toast.success("Product created successfully");
                     navigate('/dashboard');
@@ -129,7 +123,6 @@ const Products = () => {
         } catch (error) {
             toast.error("Product already exists");
         } finally {
-            setLoading(false);
             setErrors({});
         }
     };
@@ -142,7 +135,7 @@ const Products = () => {
                         <h2 className=''>Product details</h2>
                         <div className='w-50 d-flex justify-content-end'>
                             <button type="submit" className="cancel-btn" onClick={handleCancel}>Cancel</button>
-                            <button type="submit" className="product-btn">{loading ? 'Loading...' : (id ? 'Update Product' : 'Add Product')}</button>
+                            <button type="submit" className="product-btn">{id ? 'Update Product' : 'Add Product'}</button>
                         </div>
                     </div>
 
@@ -173,8 +166,6 @@ const Products = () => {
                         <textarea id="description" className="form-control" rows={6} cols={20} name="description" value={data.description} onChange={handleChange} ></textarea>
                         <small className="text-danger">{errors.description}</small>
                     </div>
-
-
 
                     <div className='w-75 ms-auto'>
                         <button type="button" className="w-25 btn btn-outline-secondary ms-auto d-block feature-btn" onClick={AddFeature}>Add feature</button>

@@ -1,54 +1,53 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { NavLink, Outlet } from 'react-router-dom'
 import Button from "react-bootstrap/Button"
 import Container from "react-bootstrap/Container"
 import Form from "react-bootstrap/Form"
 import InputGroup from "react-bootstrap/InputGroup"
 import "bootstrap/dist/css/bootstrap.min.css"
-import { fetchProducts } from '../store/slice/getProductsSlice'
-import { useDispatch, useSelector } from 'react-redux'
-import $ from 'jquery';
-import 'tablesorter';
+// import $ from 'jquery';
+// import 'tablesorter';
 import axios from 'axios';
 import Cookie from "js-cookie"
 import { jwtDecode } from "jwt-decode"
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import debounce from "lodash.debounce";
+import { DefaultProductStructure, JwtHeader } from '../utils/model';
 
 const Dashboard = () => {
 
-    const navigate = useNavigate()
-    const dispatch = useDispatch()
-    const [search, setSearch] = useState('')
-
-    // authentication using jwt token
+    const [searchQuery, setSearchQuery] = useState('')
+    const [productData, setProductData] = useState<DefaultProductStructure[]>([])
     const token = Cookie.get("token")
+    let userID:string;
+    if(token){
+        const decodedToken:JwtHeader = jwtDecode(token)
+        userID = decodedToken._id
+    }
+    // console.log(decodedToken)
+    // TODO: Implement search functionality debounce using Vanilla JS
     useEffect(() => {
-        if (!token) {
-            navigate("/login")
-        }
         return () => {
             debouncedSearch.cancel();
         }
-    })
+    }, [])
 
+    // TODO: Sort Functionality not working 
     useEffect(() => {
-        dispatch(fetchProducts(search));
-    }, [search]);
+        // $("#sort-table").tablesorter();
+        fetchProducts();
+    }, [searchQuery])
 
-    const data = useSelector((state) => (
-        state.api.data
-    ))
+    // Fetch all product details
+    const fetchProducts = async () => {
+        const response = await axios.get(`http://localhost:5000/api/products?search=${searchQuery}`, { headers: { Authorization: `Bearer ${token}` } });
+        setProductData(response.data)
+    }
 
-    useEffect(() => {
-        $("#sort-table").tablesorter();
-    }, [data])
-
-    const handleBookmark = async (data) => {
-        const productID = data._id
-        const decodedToken = jwtDecode(token)
-        const userID = decodedToken._id
+    // Function to handle Bookmarks Add/Remove
+    const handleBookmark = async (singleProduct: DefaultProductStructure) => {
+        const productID = singleProduct._id
 
         try {
             const response = await axios.post("http://localhost:5000/api/bookmarks/add", { userID: userID, products: [{ productID: productID }] }, { headers: { Authorization: `Bearer ${token}` } })
@@ -61,12 +60,13 @@ const Dashboard = () => {
             }
 
         } catch (error) {
-
+            toast.error(`Error: Try again!`)
         }
     }
 
-    const handleChange = (event) => {
-        setSearch(event.target.value)
+    // set Search query 
+    const handleChange = (event: { target: { value: React.SetStateAction<string> } }) => {
+        setSearchQuery(event.target.value)
     }
 
     // using debouce to reduce api calls
@@ -96,9 +96,9 @@ const Dashboard = () => {
                                 <th scope="col">Actions</th>
                             </tr>
                         </thead>
-                        {data && data.length > 0 ? (
+                        {productData && productData.length > 0 ? (
                             <tbody>
-                                {data.map((item, index) => (
+                                {productData.map((item, index) => (
                                     <tr key={index}>
                                         <td>{item.name}</td>
                                         <td>{item.description}</td>

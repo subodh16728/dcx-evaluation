@@ -12,12 +12,7 @@ const bookmarksSchema = new Schema({
         productID: {
             type: mongoose.Schema.Types.ObjectId,
             ref: Products
-        },
-        bookmarked: {
-            type: Boolean,
-            default: true
         }
-
     }]
 }, {
     timestamps: true
