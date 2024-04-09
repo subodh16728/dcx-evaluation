@@ -1,4 +1,3 @@
-
 export interface Feature {
     title: string;
     value: string;
@@ -18,19 +17,59 @@ export interface ErrorContainer {
     [props: string]: string;
 }
 
-// export interface FeatureDataContainer{
-//     [props: string]: string;
-// } 
-
 export type FeatureProp = {
     data: Feature;
     index: number;
     onChange: Function;
     onDelete: Function;
-}
+};
 
-export interface HandleChangeFeature{
+export interface HandleChangeFeature {
     index: number;
     name: string;
     value: string;
+}
+
+export interface Loading {
+    loading: boolean;
+}
+
+// --------------------------------------------------- redux interface and types -------------------------------------------
+
+export type UserDataContainer = {
+    [props: string]: string;
+};
+
+export interface UserData {
+    [props: string]: string;
+}
+
+export interface RegisterActionPayload {
+    data: UserData;
+    error: boolean;
+    message: boolean;
+    success: string;
+}
+
+export interface UserInitialState {
+    isLoading: boolean;
+    isError: boolean;
+    name: string;
+    data: RegisterActionPayload
+};
+
+// --------------------------------------------------- Bookmarks.tsx -------------------------------------------
+
+export interface DefaultProductStructure {
+    [props: number | string]: object | any;
+}
+
+// --------------------------------------------------- Dashboard.tsx -------------------------------------------
+export interface JwtHeader {
+    _id: string;
+}
+
+// --------------------------------------------------- Offers.tsx -------------------------------------------
+export interface SingleOffer {
+    [props: string]: string;
 }

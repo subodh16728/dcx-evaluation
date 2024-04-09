@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react'
 import Container from "react-bootstrap/Container"
 import "bootstrap/dist/css/bootstrap.min.css"
-import $ from 'jquery';
+// import $ from 'jquery';
 import 'tablesorter';
 import axios from 'axios'
 import Cookie from "js-cookie"
+import { DefaultProductStructure } from '../utils/model';
 
 const Bookmarks = () => {
-    const [productdata, setProductdata] = useState([])
 
+    const [productData, setProductData] = useState<DefaultProductStructure[]>([])
     const token = Cookie.get("token")
     const userID = Cookie.get("userID")
 
     useEffect(() => {
-        $("#sort-table").tablesorter();
+        // $("#sort-table").tablesorter();
         fetchBookmarks();
     }, []);
 
@@ -21,21 +22,22 @@ const Bookmarks = () => {
 
         try {
             const response = await axios.get(`http://localhost:5000/api/bookmarks?userID=${userID}`, { headers: { Authorization: `Bearer ${token}` } })
-            const bookmarks = response.data.products;
-            const productRequests = bookmarks.map(async (item) => {
-                const productResponse = await axios.get(`http://localhost:5000/api/products/id?productID=${item.productID}`, { headers: { Authorization: `Bearer ${token}` } });
-                return productResponse.data;
+            const bookmarkedProductIds = response.data.products;
+            const bookmarkedItems = bookmarkedProductIds.map(async (item: { productID: any; }) => {
+                const bookmarkedProductResponse = await axios.get(`http://localhost:5000/api/products/id?productID=${item.productID}`, { headers: { Authorization: `Bearer ${token}` } });
+                return bookmarkedProductResponse.data;
             });
 
-
-            const products = await Promise.all(productRequests);
-            setProductdata(products);
+            const bookmarkedProducts = await Promise.all(bookmarkedItems);
+            console.log("Bookmarked products: ",bookmarkedProducts)
+            setProductData(bookmarkedProducts);
         } catch (error) {
             console.error(error)
         }
     }
 
-    const handleBookmark = async (data) => {
+    // Add or remove bookmark
+    const handleBookmark = async (data: DefaultProductStructure) => {
         const productID = data._id;
 
         try {
@@ -53,7 +55,7 @@ const Bookmarks = () => {
             <div className="container mt-5">
                 <Container>
 
-                    <table id='sort-table' class="table table-striped">
+                    <table id='sort-table' className="table table-striped">
                         <thead>
                             <tr>
                                 <th scope="col">Title</th>
@@ -64,10 +66,10 @@ const Bookmarks = () => {
                             </tr>
                         </thead>
                         {
-                            productdata && productdata.length > 0 ? (
+                            productData && productData.length > 0 ? (
                                 <tbody>
                                     {
-                                        productdata && productdata.map((item, index) => (
+                                        productData && productData.map((item, index) => (
 
                                             <tr key={index}>
                                                 <td>{item.name}</td>
@@ -81,7 +83,7 @@ const Bookmarks = () => {
                                                         onClick={() => handleBookmark(item)}
                                                     >
                                                         <i
-                                                            class='bi-bookmark-fill'
+                                                            className='bi-bookmark-fill'
                                                         ></i>
                                                     </a>
                                                 </td>

@@ -62,7 +62,7 @@ const userSignUp = async (req, res) => {
                 const save = await userDetails.save()
                 console.log(save)
 
-                return res.status(200).json({
+                return res.status(201).json({
                     message: "Account created successfully",
                     data: save,
                     error: false,

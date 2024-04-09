@@ -13,6 +13,7 @@ const Features = ({ data, index, onChange, onDelete }:FeatureProp) => {
     }
 
     const handleDelete = () => {
+        alert("Do you really want to delete this feature?")
         onDelete(index);
     };
 
