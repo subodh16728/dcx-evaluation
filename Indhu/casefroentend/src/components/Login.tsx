@@ -20,11 +20,11 @@ export default function Login(){
     
     })
     
-    const changeHandler=e=>{
-        setData({...data,[e.target.name]:e.target.value})
+    const changeHandler=(e:React.FormEvent<HTMLInputElement>)=>{
+        setData({...data,[(e.target as HTMLInputElement).name]:(e.target as HTMLInputElement).value})
     }
     
-    const submitHandler=e=>{
+    const submitHandler=(e:React.FormEvent<HTMLFormElement>)=>{
         e.preventDefault();
         axios.post("http://localhost:3000/api/login",data)
         .then(res=>{
@@ -33,7 +33,11 @@ export default function Login(){
             const token=res.data.token;
             localStorage.setItem("token", token);
 
-            const UserId=jwtDecode(token).user.id;
+            let UserId:string
+                const data:{user:{id:string}}=jwtDecode(token)
+                UserId=data.user.id
+
+            // const UserId=jwtDecode(token).user.id;
             // console.log(UserId);
            
             localStorage.setItem("userId",UserId);

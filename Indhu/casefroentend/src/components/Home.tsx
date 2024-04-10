@@ -6,22 +6,22 @@ import axios from "axios";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./CSS/Table.css";
-
+import {Product} from "../utils/model"
 const Home = () => {
     // const [userData, setUserData] = useState(null);
-    const [tableData, setTableData] = useState([]);
+    const [tableData, setTableData] = useState<Product[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [searchResults, setSearchResults] = useState([]);
-    const[wishlist,setWishlist]=useState([]);
+    const [searchResults, setSearchResults] = useState<Product[]>([]);
+    const[wishlist,setWishlist]=useState<Product[]>([]);
     const navigate= useNavigate();
     
 const token = localStorage.getItem("token")
  
-    // useEffect(() => {
-    //     if (!token) {
-    //         navigate("/login")
-    //     }
-    // }, [])
+    useEffect(() => {
+        if (!token) {
+            navigate("/login")
+        }
+    }, [])
     
     useEffect(() => {
         const fetchData = async () => {
@@ -67,20 +67,23 @@ const token = localStorage.getItem("token")
     }, [token]); 
      
     
-    const handleSearch = (e) => {
-        setSearchTerm(e.target.value);
+    const handleSearch = (e: React.FormEvent<HTMLInputElement>) => {
+        setSearchTerm((e.target as HTMLInputElement). value);
         const results = tableData.filter(product =>
-            product.name.toLowerCase().includes(e.target.value.toLowerCase())
+            product.name.toLowerCase().includes((e.target as HTMLInputElement).value.toLowerCase())
         );
         setSearchResults(results);
     };
+    
   
     
-    const handleremoveproduct = async (pid) => {
+    const handleremoveproduct = async (pid:string|undefined) => {
         try {
             await axios.delete(`http://localhost:3000/api/table/${pid}`);
-            setTableData(prevTableData => prevTableData.filter(product => product._id !== pid));
+            setSearchResults(prevTableData => prevTableData.filter(product => product._id !== pid));
+            
             toast.success("Product removed successfully");
+            console.log(tableData);
         } catch (error) {
             console.error('Error:', error);
             toast.error('Failed to remove product');
@@ -88,7 +91,7 @@ const token = localStorage.getItem("token")
     };
 
 
-    const addToWishlist = async (pId) => {
+    const addToWishlist = async (pId:string|undefined) => {
         try {
            const UserId=localStorage.getItem("userId");
            console.log(UserId);
@@ -101,7 +104,7 @@ const token = localStorage.getItem("token")
         }
     };
 
-    const isProductInWishlist = (prodId) => {
+    const isProductInWishlist = (prodId:any) => {
         return wishlist && wishlist.includes(prodId);
     };
  
@@ -117,7 +120,7 @@ const token = localStorage.getItem("token")
                         placeholder="Search by product name..."
                         value={searchTerm}
                         onChange={handleSearch}
-                    /> <i class="bi bi-search"></i>
+                    /> <i className="bi bi-search"></i>
                 </div>
                 
             </div>
@@ -135,7 +138,7 @@ const token = localStorage.getItem("token")
                         </tr>
                     </thead>
                     <tbody>
-                        {searchResults.map((product, index) => (
+                        {searchResults.map((product:Product, index) => (
                             <tr key={index}>
                                 {/* <td>{product.name}</td> */}
                                 <td>
@@ -146,9 +149,7 @@ const token = localStorage.getItem("token")
                                 <td>{product.description}</td>
                                 <td>{product.price}</td>
                                 <td>{product.category}</td>
-                                <td>
-                                                        
-                                                           
+                                <td>                             
                                 {wishlist && wishlist.length > 0 && (
                                                             isProductInWishlist(product._id) ? (
                                                                 <button onClick={() => addToWishlist(product._id)} className='btn btn-danger'>
@@ -167,7 +168,7 @@ const token = localStorage.getItem("token")
                                                         )}
                                                     </td>
                                 
-                                <td> <NavLink className='w-pbuton' onClick={() => { handleremoveproduct(product._id) }}><i className="bi bi-trash3"></i></NavLink>
+                                <td> <NavLink to={""} className='w-pbuton' onClick={() => { handleremoveproduct(product._id) }}><i className="bi bi-trash3"></i></NavLink>
                                 <NavLink
                                                 className='text-dark'
                                                 to={`/update/${product._id}`}

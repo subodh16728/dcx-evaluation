@@ -2,10 +2,21 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate ,NavLink} from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
+import React from "react";
+import {Product} from "../utils/model"
+
 
 
 export default function ProductDetails() {
-  const [data, setData] = useState({});
+  const [data, setData] = useState<Product>({
+    name:"",
+    description:"",
+    category:"",
+    price:0,
+    features: [],
+    _id:""
+  });
+  
   const { id } = useParams();
 
   const populateProductById = async () => {
@@ -33,7 +44,7 @@ export default function ProductDetails() {
     }
   }, []);
 
-  const getImageUrl = (productName) => {
+  const getImageUrl = (productName:string) => {
     if (productName === "Acer SB220Q bi 21.5 inches Full HD (1920 x 1080) IPS Ultra-Thin") {
       return "https://images-cdn.ubuy.co.in/633ab9d36deffd67735b38eb-acer-sb220q-bi-21-5-inches-full-hd-1920.jpg";
     } else if (productName === "BIYLACLESEN Women's 3-in-1 Snowboard Jacket Winter Coats") {

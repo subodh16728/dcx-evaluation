@@ -50,7 +50,7 @@ export default function NavBarc() {
           <ul className="navbar-nav mb-2 mb-lg-0">
             <li className="nav-item">
               
-              <NavLink className="nav-link text-white" to="/wishlist"> <i class="bi bi-heart"></i> Wishlist </NavLink>
+              <NavLink className="nav-link text-white" to="/wishlist"> <i className="bi bi-heart"></i> Wishlist </NavLink>
             </li>
           </ul>
 

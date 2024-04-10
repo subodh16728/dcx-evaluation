@@ -1,10 +1,10 @@
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import React, { useState } from "react";
+import React, { FormEvent, useState } from "react";
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { NavLink, useNavigate } from "react-router-dom";
-
+import { ErrorsF } from '../utils/model';
 
 export default function Register() {
     const navigate = useNavigate();
@@ -15,15 +15,25 @@ export default function Register() {
         password: "",
         confirmpassword: ""
     });
-    const [errors, setErrors] = useState({});
+    const [errors, setErrors] = useState<ErrorsF>({
+        name: '',
+            email: '',
+            password: '',
+            confirmpassword: ''
+    });
 
-    const changeHandler = e => {
-        setData({ ...data, [e.target.name]: e.target.value });
-        setErrors({ ...errors, [e.target.name]: '' }); 
+    const changeHandler = (e:React.FormEvent<HTMLInputElement>) => {
+        setData({ ...data, [(e.target as HTMLInputElement).name]: (e.target as HTMLInputElement).value });
+        setErrors({ ...errors, [(e.target as HTMLInputElement).name]: '' }); 
     };
 
     const validateForm = () => {
-        const newErrors = {};
+        const newErrors:ErrorsF = {
+            name: '',
+            email: '',
+            password: '',
+            confirmpassword: ''
+        };
 
         if (!data.name.trim()) {
             newErrors.name = 'Name is required';
@@ -48,7 +58,7 @@ export default function Register() {
         return Object.keys(newErrors).length === 0; 
     };
 
-    const submitHandler = async (e) => {
+    const submitHandler = async (e:FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (validateForm()) {
