@@ -3,17 +3,29 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
 import "./CSS/Table.css";
+import {  Product } from '../utils/model';
 
 
 const Wishlist = () => {
     const token=localStorage.getItem("token");
     const navigate = useNavigate();
   
-    const [wishlistItems, setWishlistItems] = useState([]);
-    const [productDetails, setProductDetails] = useState({});
+    const [wishlistItems, setWishlistItems] = useState<any[]>([]);
+    const [productDetails, setProductDetails] = useState<Product[]>([{
+        name:"",
+        description:"",
+        price:0,
+        category:"",
+        features:[]
+    }]);
     
-    const userId=jwtDecode(token).user.id;
-            console.log(userId);
+    let data:{user:{id:string}};
+    let userId:string|undefined
+   
+    if(token){
+        data=jwtDecode(token)
+        userId=data.user.id
+    }
             useEffect(() => {
                 if (!token) {
                     navigate("/login")
@@ -46,7 +58,7 @@ const Wishlist = () => {
     }, [token, navigate]);
 
     useEffect(() => {
-        const fetchProductDetails = async (productId) => {
+        const fetchProductDetails = async (productId:string) => {
             try {
 
                 const response = await axios.get(`http://localhost:3000/api/table/${productId}`);
@@ -67,7 +79,7 @@ const Wishlist = () => {
             }
         };
 
-        wishlistItems.forEach(wishlistItem => {
+        wishlistItems.forEach((wishlistItem: { product: any[]; }) => {
             wishlistItem.product.forEach(productId => {
                 if (!productDetails[productId]) {
                     fetchProductDetails(productId);
@@ -76,13 +88,13 @@ const Wishlist = () => {
         });
     }, [wishlistItems, productDetails]);
 
-    const removeProductFromWishlist = async (productId) => {
+    const removeProductFromWishlist = async (productId:string) => {
         try {
             const userId = localStorage.getItem("userId")
             const response = await axios.put(`http://localhost:3000/api/bookmark/add/${userId}`, { product: productId });
             console.log(response);
             setWishlistItems(prevItems => {
-                const updatedItems = prevItems.map(item => {
+                const updatedItems = prevItems.map((item: { product: any[]; }) => {
                  
                     if (item.product.includes(productId)) {
                         return {
@@ -93,7 +105,7 @@ const Wishlist = () => {
                     return item;
                 });
               
-                return updatedItems.filter(item => item.product.length > 0);
+                return updatedItems.filter((item: { product: string | any[]; }) => item.product.length > 0);
             });
      
         } catch (error) {
@@ -117,7 +129,7 @@ const Wishlist = () => {
                 </thead>
                 <tbody>
                     {wishlistItems.length>0 ?
-                    (wishlistItems.map(wishlistItem => (
+                    (wishlistItems.map((wishlistItem: { _id: React.Key | null | undefined; product: any[]; }) => (
                         <React.Fragment key={wishlistItem._id}>
                             {wishlistItem.product.map(productId => (
                                 <tr key={productId}>
@@ -129,7 +141,7 @@ const Wishlist = () => {
                                             <td>{productDetails[productId].description}</td>
                                             <td>{productDetails[productId].price}</td>
                                             <td>{productDetails[productId].category}</td>
-                                           <td> <button className='w-pbutton' onClick={() => { removeProductFromWishlist(productId) }}><i class="bi bi-trash"></i></button></td>
+                                           <td> <button className='w-pbutton' onClick={() => { removeProductFromWishlist(productId) }}><i className="bi bi-trash"></i></button></td>
                                         </React.Fragment>
                                     )}
                                 </tr>
@@ -143,5 +155,3 @@ const Wishlist = () => {
 };
 
 export default Wishlist;
-
-

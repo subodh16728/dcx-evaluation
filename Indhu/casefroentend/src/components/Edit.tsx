@@ -31,14 +31,14 @@ const ProfileEdit = () => {
     }, [])
  
  
-    const handleChange = (e) => {
+    const handleChange = (e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         setFormData((prevForm) => ({
             ...prevForm,
-            [e.target.name]: e.target.value
+            [(e.target as HTMLInputElement).name]: (e.target as HTMLInputElement).value
         }));
     };
  
-    const handleUpdate = async (e) => {
+    const handleUpdate = async (e: React.FormEvent<HTMLButtonElement>) => {
         e.preventDefault();
         await axios.put(`${baseUrl}/edit/${id}`, formData);
         toast.success('User updated successfully');

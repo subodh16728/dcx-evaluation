@@ -4,7 +4,7 @@ import axios from "axios";
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
 import { jwtDecode } from 'jwt-decode';
-
+import { Offers1,Decode } from "../utils/model";
 export default function Offers() {
     let token = localStorage.getItem("token");
     const navigate = useNavigate();
@@ -19,11 +19,13 @@ export default function Offers() {
     const [offers, setOffers] = useState([]);
  
     // Decode the token to access its payload
-    let decodedToken = null;
+    let decodedToken: Decode;
     if (token) {
         decodedToken = jwtDecode(token);
+        console.log(typeof decodedToken);
+        console.log("Email Id: "+ (decodedToken.email));
     }
-    console.log("Email Id: "+ decodedToken.email);
+    
  
     useEffect(() => {
         if (!token) {
@@ -44,7 +46,7 @@ export default function Offers() {
  
  
  
-    const sendEmail = (data) => {
+    const sendEmail = (data:Offers1) => {
  
         try {
             axios.post("http://localhost:3000/api/myoffers/sendmail", { email: decodedToken.email, data })
@@ -87,17 +89,17 @@ export default function Offers() {
     return (
         <div className="row mx-auto">
             <div className="row">
-                {offers.map((offer, index) => (
+                {offers.map((offer:Offers1, index) => (
                     <div className="offer-box col-3" style={offerBoxStyle} key={index}>
                         <h3>{offer.Title}</h3>
                         <p><strong>Description:</strong> {offer.Description}</p>
                         <p><strong>Discount:</strong> {offer.Discount}%</p>
                         <p><strong>Start Date:</strong> {offer.StartDate}</p>
                         <p><strong>End Date:</strong> {offer.EndDate}</p>
-                        <p><strong>Coupon Code:</strong> {offer.CouponCode}</p>
+                        
                         <p><strong>Availability:</strong> {offer.Availability}</p>
                         <p><strong>Redemption Method:</strong> {offer.RedemptionMethod}</p>
-                        <button style={buttonStyle} onClick={() => sendEmail(offer)}>Send</button>
+                        <button onClick={() => sendEmail(offer)}>Send</button>
                     </div>
                 ))}
             </div>

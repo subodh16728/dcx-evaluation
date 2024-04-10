@@ -1,11 +1,13 @@
 import "./CSS/Header.css";
 import React, { useEffect } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
-import { useSelector } from 'react-redux'
+
+import { useAppSelector } from "../store/slice/hooks";
+
 
 export default function HeaderBar() {
     const token = localStorage.getItem("token")
-    const data = useSelector((state) => state.api.data);
+    const data = useAppSelector((state) => state.api.data);
     console.log(data);
     const location = useLocation();
     const navigate = useNavigate();
@@ -35,9 +37,9 @@ export default function HeaderBar() {
                 </div>
                 <div className="welcomeMessage">
                 {data && (
-                    <div class="dropdown">
+                    <div className="dropdown">
                     <button
-                  class="btn btn-outline-dark dropdown-toggle"
+                  className="btn btn-outline-dark dropdown-toggle"
                   type="button"
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
@@ -46,15 +48,15 @@ export default function HeaderBar() {
                     <span className="text-white">Welcome {data.name}!</span>
                   </b>
                 </button>
-                <ul class="dropDownItemmenu dropdown-menu">
+                <ul className="dropDownItemmenu dropdown-menu">
                   <li>
-                    <a class="dropDownItem dropdown-item" href="#" onClick={handleLogOut}>
-                      Logout <i class="bi bi-box-arrow-right"></i>
+                    <a className="dropDownItem dropdown-item" href="#" onClick={handleLogOut}>
+                      Logout <i className="bi bi-box-arrow-right"></i>
                     </a>
                   </li>
                   <li>
-                    <a class="dropDownItem dropdown-item" href="/myprofile">
-                    <i class="bi bi-person"></i>  User Profile
+                    <a className="dropDownItem dropdown-item" href="/myprofile">
+                    <i className="bi bi-person"></i>  User Profile
                     </a>
                   </li>
                 </ul>
