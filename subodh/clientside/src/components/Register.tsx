@@ -1,19 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import Joi from "joi";
+import Cookie from "js-cookie";
 import axios from 'axios';
-import Cookie from "js-cookie"
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useDispatch, useSelector } from 'react-redux';
-import { registerUser } from '../store/slice/registerUserSlice';
+import { ErrorContainer } from '../utils/model';
 
 const Register = () => {
 
-    const [loading, setLoading] = useState(false);      // loading state
-    const [errors, setErrors] = useState({});           // joi errors
+    const [loading, setLoading] = useState(false);                      // loading state
+    const [errors, setErrors] = useState<ErrorContainer>({});           // joi errors
+    const [data, setData] = useState({
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: ""
+    });
     const navigate = useNavigate();
-    const dispatch = useDispatch();
     const token = Cookie.get("token")
 
     useEffect(() => {
@@ -33,32 +37,36 @@ const Register = () => {
         confirmPassword: Joi.string().valid(Joi.ref('password')).required().messages({ 'any.only': 'Passwords must match', })
     });
 
-    const [data, setData] = useState({
-        name: "",
-        email: "",
-        password: "",
-        confirmPassword: ""
-    });
-
-    const handleChange = (e) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
 
-        setData((preve) => {
-            return {
-                ...preve,
-                [name]: value
-            }
+        setData({
+            ...data,
+            [name]: value
         })
     }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleRegister = async () => {
+        try {
+            const response = await axios.post(`http://localhost:5000/api/register`, data);
+            if (response.data.success === true) {
+                toast.success(response.data.message)
+                navigate("/login")
+            } else {
+                toast.error(response.data.message)
+            }
+        } catch (error) {
+            toast.error(`Error: Try again!`)
+        }
+    }
 
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
         const { error } = registerSchema.validate(data, { abortEarly: true });
 
-        // getting the errors in valErr
+        // getting the joi errors in valErr
         if (error) {
-            const valErr = {};
+            const valErr:ErrorContainer = {};
             error.details.map((err) => {
                 valErr[err.path[0]] = err.message;
             });
@@ -67,15 +75,7 @@ const Register = () => {
         }
 
         setLoading(true);
-
-        const response = await dispatch(registerUser(data))
-        if (response.payload.success === true) {
-            toast.success(response.payload.message)
-            navigate("/login")
-        } else {
-            toast.error(response.payload.message)
-        }
-
+        handleRegister();
         setLoading(false);
         setErrors({});
     };

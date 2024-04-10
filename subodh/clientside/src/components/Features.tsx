@@ -1,17 +1,19 @@
-import React from 'react'
+import { ChangeEvent } from 'react'
 import "../App.css"
 import 'bootstrap/dist/css/bootstrap.css';
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
+import { FeatureProp } from '../utils/model';
 
-const Features = ({ data, index, onChange, onDelete }) => {
+const Features = ({ data, index, onChange, onDelete }:FeatureProp) => {
 
-    const handleFeatureChange = (e) => {
+    const handleFeatureChange = (e:ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         onChange(index, name, value)
     }
 
     const handleDelete = () => {
+        alert("Do you really want to delete this feature?")
         onDelete(index);
     };
 
@@ -36,7 +38,7 @@ const Features = ({ data, index, onChange, onDelete }) => {
                             overlay={(props) => (
                                 <Tooltip {...props}>
                                     Delete feature
-                                </Tooltip>
+                                    </Tooltip>
                             )}
                             placement='top'
                         ><i className="bi bi-trash3-fill icon" data-toggle='tooltip' onClick={handleDelete}></i>

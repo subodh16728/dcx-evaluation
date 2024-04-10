@@ -4,6 +4,7 @@ import axios from "axios";
 import Cookie from "js-cookie"
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { SingleOffer } from '../utils/model';
 
 const Offers = () => {
 
@@ -23,8 +24,8 @@ const Offers = () => {
         }
     }
 
-    // get particular offer and send
-    const handleOffer = async (offerID) => {
+    // Send offers
+    const handleOffer = async (offerID: string) => {
         try {
             const response = await axios.get(`http://localhost:5000/api/offers/${offerID}`, {
                 headers: {
@@ -42,7 +43,7 @@ const Offers = () => {
         <div className="container mb-5">
             <h1 className="text-center mt-4 mb-4">Latest Offers</h1>
             <Row xs={1} md={3} className="g-4">
-                {data.map((item, index) => (
+                {data.map((item: SingleOffer, index) => (
                     <Col key={index}>
                         <Card style={{ width: '18rem', height: '100%' }}>
                             <Card.Body>
@@ -52,7 +53,7 @@ const Offers = () => {
                                     <small className='text-muted'>Location: {item.location}</small>
                                     <small className='text-muted'>Expiry date: {item.expiry_date}</small>
                                 </div>
-                                <Button variant="primary" className='mt-3' onClick={() => handleOffer(item._id, index)}>Send Offer</Button>
+                                <Button variant="primary" className='mt-3' onClick={() => handleOffer(item._id)}>Send Offer</Button>
                             </Card.Body>
                         </Card>
                     </Col>
