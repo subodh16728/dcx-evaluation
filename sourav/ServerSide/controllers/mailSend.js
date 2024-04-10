@@ -2,6 +2,8 @@
 // Import nodemailer library
 const nodemailer = require('nodemailer');
 
+const dotenv = require('dotenv')
+dotenv.config()
 // Create transporter with Gmail SMTP configuration
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -9,8 +11,8 @@ const transporter = nodemailer.createTransport({
   port: 465,
   secure: true, // Use true for port 465, false for other ports
   auth: {
-    user: 'souravmallick6434@gmail.com',
-    pass: 'ksni yzfm lrqj gqqv'
+    user: process.env.EMAIL,
+    pass: process.env.PASS
   },
 });
 
