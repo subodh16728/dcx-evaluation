@@ -5,7 +5,7 @@ import { Props } from "../utils/model"
  
 const Features:React.FC<Props> = ({ data, index, onChange, onDelete }) => {
   const handleChange= (event:React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
+    const { name,value } = event.target;
     onChange(index, name, value);
   };
  
