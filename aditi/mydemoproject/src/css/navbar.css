@@ -1,0 +1,16 @@
+.dropDownItemmenu {
+  background-color: rgb(26, 27, 27);
+}
+.dropDownItem {
+  color: white;
+}
+.dropDownItem:hover {
+  color: darkcyan;
+}
+
+.navbar{
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+}

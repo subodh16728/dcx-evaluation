@@ -6,7 +6,7 @@ exports.addProduct = async (req, res) => {
   if (newProduct != null) {
     try {
       const product1 = await Product.findOne({
-        productName: newProduct.productName,
+        name: newProduct.name
       });
       if (product1) {
         return res.status(400).send("Product Already Exists");
@@ -50,13 +50,30 @@ exports.updateById = async (req, res) => {
   }
 };
 
-  exports.getBookmarkedProducts = async (req,res) => {
-    try {
-      const bookmarks = await Product.find({ productBookmarked: true });
-      res.json(bookmarks);
+  // exports.getBookmarkedProducts = async (req,res) => {
+  //   try {
+  //     const bookmarks = await Product.find({ productBookmarked: true });
+  //     res.json(bookmarks);
       
-    } catch (error) {
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
+  //   } catch (error) {
+  //     res.status(500).json({ error: 'Internal Server Error' });
+  //   }
+  // };
 
-  };
+
+  exports.getsearchedProduct = async (req, res) => {
+    
+    const { q } = req.query;
+    Product.find({
+        $or: [
+            { category: { $regex: new RegExp(q, 'i') } },
+            { name: { $regex: new RegExp(q, 'i') } }
+        ]
+    })
+        .then((data) => {
+            res.status(200).json(data);
+        })
+        .catch((err) => {
+            res.status(400).send({ error: err })
+        })
+}

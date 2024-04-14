@@ -44,3 +44,55 @@
 .scrollable-form-container::-webkit-scrollbar {
   width: 0 !important;
 }
+.main {
+  background-color: white;
+  padding: 20px;
+  width: 50%; /* Full width */
+ 
+  border-radius: 10px; /* Adjust the radius as needed */
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+  margin-top: 20px;
+}
+.btnDiv{
+  display: flex;
+  gap: 10px;
+  margin-left: auto;
+  flex-direction: row-reverse
+}
+.Btn{
+  padding: 10px ; /* Adjust padding as needed */
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 0; /* Reset default button margin */
+
+}
+.Btn1{
+  padding: 10px ;
+  background-color: #788779; 
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 0; /* Reset default button margin */
+  
+
+}
+.featureBtn{
+  padding: 10px ;
+  background-color: #4CAF50; 
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 0;
+
+}

@@ -1,17 +1,1 @@
 
-.sorting-head:hover {
-  cursor: pointer !important;
-}
-
-.searchBox{
-  text-align:center;
-  box-sizing: border-box;
-    border: 1px solid #291A1D;
-    border-radius: 5px;
-    padding: 5px 25px 5px;
-    background-image: url(../public/images/search_icon.png);
-    background-repeat: no-repeat;
-    background-size: 35px;
-    margin: 10px 5px;
-    width: 95%;
-}
