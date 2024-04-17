@@ -10,6 +10,7 @@ import { ErrorContainer, Feature, Product } from "../utils/model";
 
 const Products = () => {
   const [errors, setErrors] = useState<ErrorContainer>({});
+  const [formSubmitted, setFormSubmitted] = useState(false);
   const navigate = useNavigate();
   const [feature, setFeature] = useState<Feature>({
     title: "",
@@ -36,22 +37,27 @@ const Products = () => {
   }, []);
 
   const productSchema = Joi.object({
-    name: Joi.string().required(),
+    name: Joi.string().min(3).required(),
     category: Joi.string().required(),
     price: Joi.number().required(),
-    description: Joi.string().required(),
-    features: Joi.array().required(),
+    description: Joi.string().min(10).required(),
+    features: Joi.array()
+      .items({
+        title: Joi.string().min(3).required(),
+        value: Joi.string().min(3).required(),
+        _id: Joi.any().strip(),
+      })
+      .required(),
     createdAt: Joi.any().strip(),
     updatedAt: Joi.any().strip(),
   });
 
-  console.log("Feature outside AddFeature: ", feature);
   const AddFeature = () => {
     setData({
       ...data,
       features: [...data.features, feature],
     });
-    setFeature({ title: "", value: "" }); // required to set the new fields with empty values
+    setFeature({ title: "", value: "" });
   };
 
   const handleChangeFeatures = (index: number, name: string, value: string) => {
@@ -89,7 +95,7 @@ const Products = () => {
         `http://localhost:5000/api/products/${id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      const { _id, __v, bookmarked, ...updatedData } = response.data;
+      const { _id, __v, ...updatedData } = response.data;
       setData(updatedData);
     } catch (error) {
       console.error(error);
@@ -98,9 +104,7 @@ const Products = () => {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     const json = JSON.parse(JSON.stringify(data));
-    json["bookmarked"] = false;
     const { error } = productSchema.validate(data, { abortEarly: true });
 
     if (error) {
@@ -109,37 +113,60 @@ const Products = () => {
         valErr[err.path[0]] = err.message;
       });
       setErrors(valErr);
+      setFormSubmitted(!formSubmitted);
       return;
     }
 
-    try {
-      if (id) {
-        const response = await axios.put(
-          `http://localhost:5000/api/products/edit/${id}`,
-          data,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        if (response.status === 204) {
-          toast.success("Product updated successfully");
-          navigate("/dashboard");
-        }
-      } else {
-        const response = await axios.post(
-          "http://localhost:5000/api/products/add",
-          json,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        console.log("Added product response: ", response);
-        if (response.status === 201) {
-          toast.success("Product created successfully");
-          navigate("/dashboard");
+    // Logic to restrict adding same features
+    let dataExist;
+    const featuresCopy = [...data.features];
+    if (featuresCopy.length > 1) {
+      for (let i = 0; i <= featuresCopy.length - 2; i++) {
+        if (
+          featuresCopy[featuresCopy.length - 1].title === featuresCopy[i].title
+        ) {
+          dataExist = true;
+          break;
+        } else {
+          dataExist = false;
         }
       }
-    } catch (error) {
-      toast.error("Product already exists");
-    } finally {
-      setErrors({});
+    } else {
+      dataExist = false;
     }
+
+    if (dataExist === false) {
+      try {
+        if (id) {
+          const response = await axios.put(
+            `http://localhost:5000/api/products/edit/${id}`,
+            data,
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          if (response.status === 204) {
+            toast.success("Product updated successfully");
+            navigate("/dashboard");
+          }
+        } else {
+          const response = await axios.post(
+            "http://localhost:5000/api/products/add",
+            json,
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          if (response.status === 201) {
+            toast.success("Product created successfully");
+            navigate("/dashboard");
+          }
+        }
+      } catch (error) {
+        toast.error("Product already exists");
+      } finally {
+        setErrors({});
+      }
+    } else {
+      toast.warning(`Product or Feature already exists`);
+    }
+    dataExist = true;
   };
 
   return (
@@ -238,12 +265,12 @@ const Products = () => {
             </button>
           </div>
           {data.features.map((dataItem, index) => {
-            //this index is of features[] array
             return (
               <Features
                 key={index}
                 index={index}
                 data={dataItem}
+                submitted={formSubmitted}
                 onChange={handleChangeFeatures}
                 onDelete={handleDeleteFeatures}
               />

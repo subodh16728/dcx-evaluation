@@ -33,7 +33,7 @@ exports.getProduct = (req, res) => {
 exports.addProduct = (req, res) => {
     verifyUser(req, res, async () => {
         try {
-            const NewProduct = req.body;
+            const NewProduct = await req.body;
             if (NewProduct != null) {
                 const response = await Products.create(NewProduct)
                 res.status(201).send(response)
@@ -42,6 +42,7 @@ exports.addProduct = (req, res) => {
             }
         } catch (error) {
             res.status(400).send(error)
+            console.log(`Bad request: ${error}`)
         }
     })
 }
@@ -89,3 +90,17 @@ exports.getProductById = (req, res) => {
             })
     })
 }
+
+// delete product
+exports.deleteProduct = (req, res) => {
+    verifyUser(req, res, () => {
+        const productID = req.params.id;
+        Products.findByIdAndDelete(productID)
+            .then((data) => {
+                res.status(204).send(`Product deleted successfully`)
+            })
+            .catch((error) => {
+                res.status(404).send(`Product does not exist: ${error}`)
+            })
+    })
+} 

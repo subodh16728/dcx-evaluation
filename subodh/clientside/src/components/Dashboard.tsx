@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, ChangeEvent } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
@@ -12,8 +12,13 @@ import Cookie from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import debounce from "lodash.debounce";
-import { DefaultProductStructure, JwtHeader } from "../utils/model";
+import {
+  DefaultProductStructure,
+  JwtHeader,
+  RestParameter,
+} from "../utils/model";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import "../App.css";
 
 const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -24,14 +29,7 @@ const Dashboard = () => {
     const decodedToken: JwtHeader = jwtDecode(token);
     userID = decodedToken._id;
   }
-  // TODO: Implement search functionality debounce using Vanilla JS
-  useEffect(() => {
-    return () => {
-      debouncedSearch.cancel();
-    };
-  }, []);
 
-  // TODO: Sort Functionality not working
   useEffect(() => {
     // $("#sort-table").tablesorter();
     fetchProducts();
@@ -68,17 +66,42 @@ const Dashboard = () => {
     }
   };
 
+  const handleDelete = async (singleProduct: DefaultProductStructure) => {
+    const productID = singleProduct._id;
+    console.log("ProductID: ", productID);
+    try {
+      alert("Do you really want to delete this product?");
+      const response = await axios.delete(
+        `http://localhost:5000/api/products/delete/${productID}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (response.status === 204) {
+        // console.log("Delete response is: ", response);
+        toast.info(`Product deleted successfully`);
+        fetchProducts();
+      }
+    } catch (error) {
+      toast.error(`Error: Try again!`);
+    }
+  };
+
   // set Search query
-  const handleChange = (event: {
-    target: { value: React.SetStateAction<string> };
-  }) => {
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
 
-  // using debouce to reduce api calls
-  const debouncedSearch = useMemo(() => {
-    return debounce(handleChange, 250);
-  }, []);
+  // Debouncing the search results
+  const debounce = (searchWrapper: Function, delay: number) => {
+    let timer: ReturnType<typeof setTimeout>;
+    return function (...args: RestParameter[]) {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        searchWrapper(...args);
+      }, delay);
+    };
+  };
+
+  const debouncedSearch = debounce(handleChange, 250);
 
   return (
     <>
@@ -118,20 +141,51 @@ const Dashboard = () => {
                     <td>{item.description}</td>
                     <td>{item.category}</td>
                     <td>{item.price}</td>
-                    <td className="text-center">
-                      <a
-                        className="text-dark"
-                        href="javascript:void(0)"
-                        onClick={() => handleBookmark(item)}
+                    <td className="action-width">
+                      {/* Bookmark product */}
+                      <OverlayTrigger
+                        overlay={(props) => (
+                          <Tooltip {...props}>Bookmark</Tooltip>
+                        )}
+                        placement="top"
                       >
-                        <i className={`bi-bookmark`}></i>
-                      </a>
-                      <NavLink
-                        className="text-dark"
-                        to={`/products/edit/${item._id}`}
+                        <a
+                          className="text-dark"
+                          role="button"
+                          onClick={() => handleBookmark(item)}
+                        >
+                          <i className={`bi-bookmark me-2`}></i>
+                        </a>
+                      </OverlayTrigger>
+
+                      {/* Edit product */}
+                      <OverlayTrigger
+                        overlay={(props) => <Tooltip {...props}>Edit</Tooltip>}
+                        placement="top"
                       >
-                        <i className="bi bi-pencil-square ms-3"></i>
-                      </NavLink>
+                        <NavLink
+                          className="text-dark"
+                          to={`/products/edit/${item._id}`}
+                        >
+                          <i className="bi bi-pencil-square me-2"></i>
+                        </NavLink>
+                      </OverlayTrigger>
+
+                      {/* Delete product */}
+                      <OverlayTrigger
+                        overlay={(props) => (
+                          <Tooltip {...props}>Delete</Tooltip>
+                        )}
+                        placement="top"
+                      >
+                        <a
+                          className="text-dark"
+                          role="button"
+                          onClick={() => handleDelete(item)}
+                        >
+                          <i className={`bi bi-trash3-fill`}></i>
+                        </a>
+                      </OverlayTrigger>
                     </td>
                   </tr>
                 ))}

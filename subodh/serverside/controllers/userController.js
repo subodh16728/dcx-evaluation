@@ -89,7 +89,7 @@ const userSignin = async (req, res) => {
 
         if (!user) {
             return res.status(400).json({
-                message: "User not available",
+                message: "User does not exist",
                 error: true,
                 success: false
             })
@@ -130,7 +130,7 @@ const userSignin = async (req, res) => {
                 userID: user._id,
                 error: false,
                 success: true,
-                message: "Login successfully"
+                message: "Logged In Successfully"
             })
         })
 

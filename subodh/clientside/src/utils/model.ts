@@ -22,6 +22,7 @@ export type FeatureProp = {
     index: number;
     onChange: Function;
     onDelete: Function;
+    submitted: boolean
 };
 
 export interface HandleChangeFeature {
@@ -69,7 +70,12 @@ export interface JwtHeader {
     _id: string;
 }
 
+export interface RestParameter {
+    [props: string]: any
+}
+
 // --------------------------------------------------- Offers.tsx -------------------------------------------
 export interface SingleOffer {
     [props: string]: string;
 }
+
