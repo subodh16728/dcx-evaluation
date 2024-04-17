@@ -1,0 +1,51 @@
+/*Offers container*/
+.offer-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 30px;
+    position: relative;
+    margin-top: 20px;
+}
+
+.offer-box {
+    width: 20%;
+    padding: 20px;
+    margin: 10px;
+    margin-top: 60px;
+    border: 3px solid #5eaed3;
+    border-radius: 40px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    transition: transform 0.3s ease-in-out;
+    z-index: 0;
+}
+
+.offer-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../../public/offer.jpg');
+    background-size: contain;
+
+    opacity: .2;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.offer-box:hover {
+    transform: translateY(-20px);
+}
+
+.order-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #5eaed3;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}

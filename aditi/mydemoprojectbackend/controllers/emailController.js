@@ -112,10 +112,5 @@ const sendEmail = async(req,res) => {
 };
 
 
-
-
-
 // Export the function so it can be used in other files
-module.exports = {
-sendEmail
-};
+module.exports = { sendEmail };

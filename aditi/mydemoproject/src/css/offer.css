@@ -1,0 +1,65 @@
+.offerMain {
+  width: 50%;
+  margin: auto;
+  margin-top: 5%;
+  margin-bottom: 0.5%;
+}
+.offerMain::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("../../public/images/product1.jpg");
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+}
+
+.offerContainer {
+  box-shadow: inset;
+  padding: 20px;
+  background-color: aliceblue;
+  margin: auto;
+  border-radius: 1%;
+}
+
+.offerField {
+  border: 2px solid rgb(50, 41, 41);
+  border-radius: 5px;
+  padding: 20px;
+  margin: 5px;
+}
+
+.Ptag {
+  -webkit-text-fill-color: white;
+  font-weight: 500;
+  line-height: 1.2;
+  background-color: rgb(108 117 125);
+  padding: 1%;
+  text-align: center;
+  font-size: 25px;
+}
+
+.offer-box {
+  margin: 1%;
+}
+
+.offer-box h3 {
+  margin-left: 3%;
+}
+
+.offer-box p {
+  margin-left: 10%;
+}
+
+.offer-box button {
+  background-color: rgb(63, 74, 82);
+  border-radius: 5px;
+  border: none;
+  padding: 8px 17px;
+  font-size: 16px;
+  color: white;
+  margin-left: 70%;
+}

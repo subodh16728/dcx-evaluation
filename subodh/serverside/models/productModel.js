@@ -11,8 +11,8 @@ const productSchema = new Schema(
             required: true
         },
         features: [{
-            title: { type: String, required: true },
-            value: { type: String, required: true }
+            title: { type: String, minlength: 3, required: true },
+            value: { type: String, minlength: 3, required: true }
         }]
     },
     {

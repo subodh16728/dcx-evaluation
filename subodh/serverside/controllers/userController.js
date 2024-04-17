@@ -62,7 +62,7 @@ const userSignUp = async (req, res) => {
                 const save = await userDetails.save()
                 console.log(save)
 
-                return res.status(200).json({
+                return res.status(201).json({
                     message: "Account created successfully",
                     data: save,
                     error: false,
@@ -89,7 +89,7 @@ const userSignin = async (req, res) => {
 
         if (!user) {
             return res.status(400).json({
-                message: "User not available",
+                message: "User does not exist",
                 error: true,
                 success: false
             })
@@ -130,7 +130,7 @@ const userSignin = async (req, res) => {
                 userID: user._id,
                 error: false,
                 success: true,
-                message: "Login successfully"
+                message: "Logged In Successfully"
             })
         })
 

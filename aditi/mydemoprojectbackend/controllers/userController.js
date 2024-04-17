@@ -173,6 +173,8 @@ exports.userSignin = async (req, res) => {
         token: token,
         error: false,
         success: true,
+        id:user._id,
+        name:user.username,
         message: "Login successfully",
       });
     });
