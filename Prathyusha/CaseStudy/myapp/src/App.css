@@ -282,3 +282,83 @@ button:hover {
   color: #555;
 }
 
+/* Styles for buttons */
+.Btn,
+.Btn1 {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.Btn:hover,
+.Btn1:hover {
+  background-color: #0056b3;
+}
+
+/* Form field styles */
+.formField {
+  width: 80%;
+  margin: 0 auto;
+}
+
+.fields {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  font-weight: bold;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Tooltip styles (optional) */
+.tooltip-inner {
+  background-color: #000;
+  color: #fff;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 14px;
+}
+
+/* Main container styles */
+.main {
+  padding: 20px;
+}
+
+/* Centering content */
+.center {
+  text-align: center;
+}
+
+/* Button container styles */
+.btnDiv {
+  margin-top: 20px;
+}
+
+/* Feature button */
+.featureBtn {
+  padding: 8px 16px;
+  font-size: 14px;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.featureBtn:hover {
+  background-color: #218838;
+}
