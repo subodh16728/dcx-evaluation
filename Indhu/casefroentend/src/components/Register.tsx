@@ -21,6 +21,7 @@ export default function Register() {
             password: '',
             confirmpassword: ''
     });
+    
 
     const changeHandler = (e:React.FormEvent<HTMLInputElement>) => {
         setData({ ...data, [(e.target as HTMLInputElement).name]: (e.target as HTMLInputElement).value });
@@ -66,7 +67,7 @@ export default function Register() {
                 const res = await axios.post("http://localhost:3000/api/register", data);
                 toast.success(res.data);
                 // Redirect to login page 
-                navigate('/home');
+                navigate('/login');
             } catch (err) {
                 console.error(err);
                 const errormessage = err.response?.data;
@@ -87,8 +88,8 @@ export default function Register() {
 
 
     return (
-        <div className="d-flex justify-content-center align-items-center vh-100">
-            <div className="bg-white p-3 rounded w-25">
+        <div className=" main">
+            <div className="bg-white p-3 rounded w-30">
                 <h2>Register</h2>
                 <form onSubmit={submitHandler}>
                     <div className="mb-3">

@@ -1,0 +1,34 @@
+.offer-container{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 30px;
+    position: relative;
+    margin-top: 20px;
+}
+.offer-box {
+    width: 40%;
+    padding: 25px;
+    margin: 30px;
+    margin-top: 40px;
+    border: 3px solid #E34C77;
+    border-radius: 40px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    transition: transform 0.3s ease-in-out;
+    z-index: 0;
+}
+
+.offer-box:hover {
+    transform: translateY(-20px);
+}
+
+.order-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #E34C77;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}

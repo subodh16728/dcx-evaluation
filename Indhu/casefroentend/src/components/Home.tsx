@@ -17,11 +17,11 @@ const Home = () => {
     
 const token = localStorage.getItem("token")
  
-    useEffect(() => {
-        if (!token) {
-            navigate("/login")
-        }
-    }, [])
+    // useEffect(() => {
+    //     if (!token) {
+    //         navigate("/login")
+    //     }
+    // }, [])
     
     useEffect(() => {
         const fetchData = async () => {

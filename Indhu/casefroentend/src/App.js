@@ -28,17 +28,17 @@ function App() {
     
    
    
-    <HeaderBar/>
+    {/* <HeaderBar/> */}
     <NavBar/>
     
     
     <ToastContainer/>
       <Routes>
 
-        <Route path='/' element={<Register />} />;
+        <Route path='/register' element={<Register />} />;
         <Route path='/login' element={<Login />} />;
         <Route path='/' element={<Main />} >;
-        <Route path='/home' element={<Home />} />;
+        <Route path='/' element={<Home />} />;
         <Route path='/newproduct' element={<AddModify />} />;
         <Route path="/update/:id" element={<AddModify />} />
 

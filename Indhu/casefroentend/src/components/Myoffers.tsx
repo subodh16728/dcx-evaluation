@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
 import { jwtDecode } from 'jwt-decode';
 import { Offers1,Decode } from "../utils/model";
+import "../components/CSS/Offers.css" 
 export default function Offers() {
     let token = localStorage.getItem("token");
     const navigate = useNavigate();
@@ -63,34 +64,16 @@ export default function Offers() {
         }
     }
  
-    const offerBoxStyle = {
-        border: "1px solid #ddd",
-        borderRadius: "5px",
-        padding: "20px",
-        margin: "10px",
-        backgroundColor: "#f9f9f9",
-        boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)"
-    };
+    
 
-    const buttonStyle = {
-        backgroundColor: "#4CAF50",
-        border: "none",
-        color: "white",
-        padding: "10px 20px",
-        textAlign: "center",
-        textDecoration: "none",
-        display: "inline-block",
-        fontSize: "16px",
-        borderRadius: "5px",
-        cursor: "pointer",
-        marginTop: "10px"
-    };
+    
+   
 
     return (
-        <div className="row mx-auto">
-            <div className="row">
+        <div className="offer-container">
+            {/* <div className="offer-box" > */}
                 {offers.map((offer:Offers1, index) => (
-                    <div className="offer-box col-3" style={offerBoxStyle} key={index}>
+                    <div className="offer-box"  key={index}>
                         <h3>{offer.Title}</h3>
                         <p><strong>Description:</strong> {offer.Description}</p>
                         <p><strong>Discount:</strong> {offer.Discount}%</p>
@@ -99,10 +82,10 @@ export default function Offers() {
                         
                         <p><strong>Availability:</strong> {offer.Availability}</p>
                         <p><strong>Redemption Method:</strong> {offer.RedemptionMethod}</p>
-                        <button onClick={() => sendEmail(offer)}>Send</button>
+                        <button className="order-button" onClick={() => sendEmail(offer)}>Send</button>
                     </div>
                 ))}
             </div>
-        </div>
+        
     );
 }

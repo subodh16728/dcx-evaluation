@@ -25,3 +25,13 @@ h1{
 .product-table tbody tr:hover {
     background-color: #ddd;
 }
+.table{
+    width: auto;
+    width: 90%;
+    /* overflow-x: auto; */
+    margin: auto;
+    margin-top: 10px;
+    
+    /* max-height: 200px; */
+   
+}

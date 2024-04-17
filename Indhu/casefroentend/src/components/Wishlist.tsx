@@ -4,6 +4,7 @@ import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
 import "./CSS/Table.css";
 import {  Product } from '../utils/model';
+import { toast } from 'react-toastify';
 
 
 const Wishlist = () => {
@@ -28,6 +29,7 @@ const Wishlist = () => {
     }
             useEffect(() => {
                 if (!token) {
+                    // toast.success("Please login first.", { autoClose: 1000 });  
                     navigate("/login")
                 }
             }, [])
@@ -53,7 +55,7 @@ const Wishlist = () => {
 
     useEffect(() => {
         if (!token) {
-            navigate("/home");
+            navigate("/login");
         }
     }, [token, navigate]);
 
@@ -113,7 +115,7 @@ const Wishlist = () => {
         }
     };
     return (
-        <div className="row mx-auto" >
+        <div className="table" >
            
             <h1>Wishlist Items</h1>
             
@@ -125,6 +127,7 @@ const Wishlist = () => {
                         <th>Description</th>
                         <th>Price</th>
                         <th>Category</th>
+                        <th>Delete</th>
                     </tr>
                 </thead>
                 <tbody>
