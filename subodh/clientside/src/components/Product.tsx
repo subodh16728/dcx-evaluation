@@ -15,7 +15,6 @@ const Product = () => {
   const params = useParams();
   const productID = params.id;
   const token = Cookie.get("token");
-  // console.log(productID);
 
   useEffect(() => {
     fetchProduct();
@@ -27,14 +26,11 @@ const Product = () => {
         `http://localhost:5000/api/products/${productID}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      console.log(response.data);
       setProductData(response.data);
     } catch (error) {
       console.log(`Error: ${error}`);
     }
   };
-
-  console.log("Product data: ", productData);
 
   return (
     <div

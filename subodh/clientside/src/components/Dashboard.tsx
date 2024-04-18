@@ -68,20 +68,19 @@ const Dashboard = () => {
 
   const handleDelete = async (singleProduct: DefaultProductStructure) => {
     const productID = singleProduct._id;
-    console.log("ProductID: ", productID);
-    try {
-      alert("Do you really want to delete this product?");
-      const response = await axios.delete(
-        `http://localhost:5000/api/products/delete/${productID}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      if (response.status === 204) {
-        // console.log("Delete response is: ", response);
-        toast.info(`Product deleted successfully`);
-        fetchProducts();
+    if (window.confirm("Do you really want to delete this product?")) {
+      try {
+        const response = await axios.delete(
+          `http://localhost:5000/api/products/delete/${productID}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        if (response.status === 204) {
+          toast.info(`Product deleted successfully`);
+          fetchProducts();
+        }
+      } catch (error) {
+        toast.error(`Error: Try again!`);
       }
-    } catch (error) {
-      toast.error(`Error: Try again!`);
     }
   };
 

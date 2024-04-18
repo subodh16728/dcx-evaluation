@@ -41,8 +41,9 @@ const Features = ({
   };
 
   const handleDelete = () => {
-    alert("Do you really want to delete this feature?");
-    onDelete(index);
+    if (window.confirm("Do you really want to delete this feature?")) {
+      onDelete(index);
+    }
   };
 
   return (

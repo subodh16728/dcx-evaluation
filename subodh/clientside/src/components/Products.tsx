@@ -11,6 +11,8 @@ import { ErrorContainer, Feature, SingleProduct } from "../utils/model";
 const Products = () => {
   const [errors, setErrors] = useState<ErrorContainer>({});
   const [formSubmitted, setFormSubmitted] = useState(false);
+  let titleExists: boolean;
+  const [featureExist, setFeatureExist] = useState(false);
   const navigate = useNavigate();
   const [feature, setFeature] = useState<Feature>({
     title: "",
@@ -63,6 +65,16 @@ const Products = () => {
   const handleChangeFeatures = (index: number, name: string, value: string) => {
     const updatedFeatures = [...data.features];
     updatedFeatures[index][name] = value;
+    if (name === "title") {
+      titleExists = false;
+      updatedFeatures.forEach((feature, i) => {
+        if (i !== index && feature.title === value) {
+          titleExists = true;
+          setFeatureExist(titleExists);
+        }
+      });
+      setFeatureExist(titleExists);
+    }
     setData({ ...data, features: updatedFeatures });
   };
 
@@ -116,26 +128,7 @@ const Products = () => {
       setFormSubmitted(!formSubmitted);
       return;
     }
-
-    // Logic to restrict adding same features
-    let dataExist;
-    const featuresCopy = [...data.features];
-    if (featuresCopy.length > 1) {
-      for (let i = 0; i <= featuresCopy.length - 2; i++) {
-        if (
-          featuresCopy[featuresCopy.length - 1].title === featuresCopy[i].title
-        ) {
-          dataExist = true;
-          break;
-        } else {
-          dataExist = false;
-        }
-      }
-    } else {
-      dataExist = false;
-    }
-
-    if (dataExist === false) {
+    if (featureExist === false) {
       try {
         if (id) {
           const response = await axios.put(
@@ -164,9 +157,10 @@ const Products = () => {
         setErrors({});
       }
     } else {
-      toast.warning(`Product or Feature already exists`);
+      toast.warning(`Data already exists`);
     }
-    dataExist = true;
+    // titleExists = false;
+    // dataExist = true;
   };
 
   return (

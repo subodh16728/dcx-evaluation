@@ -20,7 +20,6 @@ const Offers = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setData(response.data);
-      console.log(response.data);
     } catch (error) {
       toast.error("Cannot fetch offers. Try again");
     }
