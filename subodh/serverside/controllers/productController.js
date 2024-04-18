@@ -79,17 +79,16 @@ exports.getProductByIdQuery = (req, res) => {
 
 // fetch product by id
 exports.getProductById = (req, res) => {
-    verifyUser(req, res, () => {
-        const id = req.params.id;
-        Products.findById(id)
-            .then((data) => {
-                res.status(200).json(data)
-            })
-            .catch((err) => {
-                res.status(400).send(err)
-            })
-    })
-}
+    try {
+        verifyUser(req, res, async () => {
+            const id = req.params.id;
+            const data = await Products.findById(id);
+            res.status(200).json(data);
+        });
+    } catch (err) {
+        res.status(400).send(err);
+    }
+};
 
 // delete product
 exports.deleteProduct = (req, res) => {

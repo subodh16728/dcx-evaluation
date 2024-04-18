@@ -83,7 +83,7 @@ const Navbar = () => {
                             <b>Welcome {name}</b>
                           </a>
                           <ul className="dropdown-menu dropdown-menu-dark dropdown-button">
-                            <li>
+                            {/* <li>
                               <a
                                 className="dropdown-item"
                                 href="javascript:void(0)"
@@ -91,7 +91,7 @@ const Navbar = () => {
                                 <i className="bi bi-person-fill"></i>
                                 &nbsp;&nbsp;Profile
                               </a>
-                            </li>
+                            </li> */}
                             <li>
                               <NavLink
                                 className="dropdown-item"

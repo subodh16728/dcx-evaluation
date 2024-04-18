@@ -58,6 +58,7 @@ const Register = () => {
         `http://localhost:5000/api/register`,
         data
       );
+      console.log(response);
       if (response.data.success === true) {
         toast.success(response.data.message);
         navigate("/login");

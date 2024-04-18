@@ -137,7 +137,14 @@ const Dashboard = () => {
               <tbody>
                 {productData.map((item, index) => (
                   <tr key={index}>
-                    <td>{item.name}</td>
+                    <td>
+                      <NavLink
+                        className={`text-muted`}
+                        to={`/product/${item._id}`}
+                      >
+                        {item.name}
+                      </NavLink>
+                    </td>
                     <td>{item.description}</td>
                     <td>{item.category}</td>
                     <td>{item.price}</td>

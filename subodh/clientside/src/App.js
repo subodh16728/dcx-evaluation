@@ -9,6 +9,7 @@ import Bookmarks from './components/Bookmarks';
 import Offers from './components/Offers';
 import { ToastContainer } from 'react-toastify';
 import Main from './components/Main';
+import Product from './components/Product';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path='/products/add' element={<Products />} />
           <Route path='/bookmarks' element={<Bookmarks />} />
           <Route path='/offers' element={<Offers />} />
+          <Route path='/product/:id' element={<Product />} />
           <Route path='/products/edit/:id' element={<Products />} />
         </Route>
       </Routes>

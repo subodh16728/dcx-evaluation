@@ -6,6 +6,7 @@ import "tablesorter";
 import axios from "axios";
 import Cookie from "js-cookie";
 import { DefaultProductStructure } from "../utils/model";
+import { NavLink } from "react-router-dom";
 
 const Bookmarks = () => {
   const [productData, setProductData] = useState<DefaultProductStructure[]>([]);
@@ -77,7 +78,14 @@ const Bookmarks = () => {
                   (item, index) =>
                     item && (
                       <tr key={index}>
-                        <td>{item.name}</td>
+                        <td>
+                          <NavLink
+                            className={`text-muted`}
+                            to={`/product/${item._id}`}
+                          >
+                            {item.name}
+                          </NavLink>
+                        </td>
                         <td>{item.description}</td>
                         <td>{item.category}</td>
                         <td>{item.price}</td>

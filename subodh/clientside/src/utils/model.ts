@@ -4,7 +4,7 @@ export interface Feature {
     [props: string]: string;
 }
 
-export interface Product {
+export interface SingleProduct {
     name: string;
     category: string;
     price: string;
@@ -79,3 +79,4 @@ export interface SingleOffer {
     [props: string]: string;
 }
 
+// --------------------------------------------------- Product.tsx -------------------------------------------

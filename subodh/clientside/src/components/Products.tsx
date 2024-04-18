@@ -6,7 +6,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Features from "./Features";
-import { ErrorContainer, Feature, Product } from "../utils/model";
+import { ErrorContainer, Feature, SingleProduct } from "../utils/model";
 
 const Products = () => {
   const [errors, setErrors] = useState<ErrorContainer>({});
@@ -17,7 +17,7 @@ const Products = () => {
     value: "",
   });
 
-  const [data, setData] = useState<Product>({
+  const [data, setData] = useState<SingleProduct>({
     name: "",
     category: "",
     price: "",
@@ -83,7 +83,7 @@ const Products = () => {
   ) => {
     let newData = { ...data };
     let keyName: string = (event.target as HTMLInputElement).name; // features
-    newData[keyName as keyof Omit<Product, "features">] = (
+    newData[keyName as keyof Omit<SingleProduct, "features">] = (
       event.target as HTMLInputElement
     ).value; // newData.features = event.target.value
     setData(newData);
