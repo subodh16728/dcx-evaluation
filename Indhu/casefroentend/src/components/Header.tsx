@@ -18,10 +18,10 @@ export default function HeaderBar() {
         }
     }, [])
 
-    const hiddenPaths = ['/', '/login'];
-    if (hiddenPaths.includes(location.pathname)) {
-        return null;
-    }
+    // const hiddenPaths = ['/', '/login'];
+    // if (hiddenPaths.includes(location.pathname)) {
+    //     return null;
+    // }
 
     const handleLogOut = () => {
         localStorage.clear()
@@ -32,8 +32,8 @@ export default function HeaderBar() {
         <div className="bodyy">
             <header>
                 <div className='headerLogo'>
-                    <img src="./mobile.jpg" alt="The Cupcake Maker Logo" />
-                    The Mobile Products
+                    <img src="./bir img1.jpg" alt="The BIR Products" />
+                    The BIReddy Products
                 </div>
                 <div className="welcomeMessage">
                 {data && (
@@ -59,6 +59,7 @@ export default function HeaderBar() {
                     <i className="bi bi-person"></i>  User Profile
                     </a>
                   </li>
+                  
                 </ul>
                 </div>
          

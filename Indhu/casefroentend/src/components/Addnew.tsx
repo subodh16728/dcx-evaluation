@@ -49,7 +49,7 @@ const AddModify = () => {
       if (!receivedProduct) {
         throw new Error("Failed to update product");
       }
-      navigate("/home");
+      navigate("/");
     } catch (error) {
       console.error("Error fetching products:", error);
     }
@@ -114,7 +114,7 @@ const handleChange = (e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement 
   const token = localStorage.getItem("token");
   useEffect(() => {
     if (!token) {
-      toast.success("Please login first.", { toastId: "1", autoClose: 1000 });
+      // toast.success("Please login first.", { toastId: "1", autoClose: 1000 });
       navigate("/login");
     }
   }, []);
@@ -175,7 +175,7 @@ const handleChange = (e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement 
                   <button
                   className="Btn1 me-2"
                   title="Cancel"
-                  onClick={() => navigate("/home")}
+                  onClick={() => navigate("/")}
                 >
                   Cancel
                 </button>

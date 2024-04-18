@@ -33,8 +33,8 @@ export default function ProductDetails() {
 
   useEffect(() => {
     if (!token) {
-      toast.success("Please login first.", { autoClose: 1000 });
-      navigate("/signin");
+      // toast.success("Please login first.", { autoClose: 1000 });
+      navigate("/login");
     }
   }, []);
 
@@ -88,7 +88,7 @@ export default function ProductDetails() {
                     </div>
                   )}
                    <div className="col text-start">
-                            <button onClick={() => navigate("/home")}type="submit" className="btn btn-success rounded-0">Back</button>
+                            <button onClick={() => navigate("/")}type="submit" className="btn btn-success rounded-0">Back</button>
                         </div>
                         <div className="col text-end">
                         <NavLink to={`/update/${data._id}`}><button type="submit" className="btn btn-success rounded-0">Update</button></NavLink>
