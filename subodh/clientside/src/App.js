@@ -10,6 +10,7 @@ import Offers from './components/Offers';
 import { ToastContainer } from 'react-toastify';
 import Main from './components/Main';
 import Product from './components/Product';
+import NotFoundPage from './components/NotFoundPage';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path='/offers' element={<Offers />} />
           <Route path='/product/:id' element={<Product />} />
           <Route path='/products/edit/:id' element={<Products />} />
+          <Route path='*' element={<NotFoundPage />} />
         </Route>
       </Routes>
     </>
