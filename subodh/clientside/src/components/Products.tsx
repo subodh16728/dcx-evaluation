@@ -65,6 +65,8 @@ const Products = () => {
   const handleChangeFeatures = (index: number, name: string, value: string) => {
     const updatedFeatures = [...data.features];
     updatedFeatures[index][name] = value;
+
+    //Logic to restrict adding the same features
     if (name === "title") {
       titleExists = false;
       updatedFeatures.forEach((feature, i) => {
@@ -152,15 +154,13 @@ const Products = () => {
           }
         }
       } catch (error) {
-        toast.error("Product already exists");
+        toast.warning("Product already exists");
       } finally {
         setErrors({});
       }
     } else {
-      toast.warning(`Data already exists`);
+      toast.warning(`Feature already exists`);
     }
-    // titleExists = false;
-    // dataExist = true;
   };
 
   return (
